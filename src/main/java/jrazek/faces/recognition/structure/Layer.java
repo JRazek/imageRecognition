@@ -1,5 +1,9 @@
 package jrazek.faces.recognition.structure;
 
-public interface Layer {
-    void run();
+public abstract class Layer {
+    protected Layer(int index){
+        this.index = index;
+    }
+    int index;
+    public abstract void run();
 }
