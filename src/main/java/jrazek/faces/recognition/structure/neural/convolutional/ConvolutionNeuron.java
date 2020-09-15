@@ -14,6 +14,7 @@ public class ConvolutionNeuron extends Neuron {
     private int indexInLayer;
     private Double[][][] weights;
 
+
     public ConvolutionNeuron(int x, int y, int z) throws RuntimeErrorException {
         if ((x / 2) * 2 == x || (y / 2) * 2 == y)
             throw new RuntimeErrorException(new Error("the Kernel size must be odd number!"));
