@@ -5,6 +5,12 @@ import jrazek.faces.recognition.utils.Utils;
 
 import java.util.LinkedList;
 
+/**
+ * this is actually an interface that is inherited by
+ * every type of layer in convolution part. Why? because
+ * theres always an output of some box in here. In ff theres only
+ * 1D Vector of output and thats why its defined only in here.
+ */
 public interface ConvolutionNetLayer {
     LinkedList<Utils.Matrix2D> getOutputBox();
     int getOutputBoxWantedSize();
