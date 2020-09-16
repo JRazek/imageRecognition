@@ -29,6 +29,28 @@ public class Utils {
             y = y + adder.getY();
         }
     }
+
+    public static class Vector3I{
+        private int x, y, z;
+        public Vector3I(int x, int y, int z){
+            this.x = x; this.y = y; this.z = z;
+        }
+        public int getX() {
+            return x;
+        }
+        public int getY() {
+            return y;
+        }
+        public int getZ(){
+            return z;
+        }
+        public void setX(int x) {
+            this.x = x;
+        }
+        public void setY(int y) {
+            this.y = y;
+        }
+    }
     public static double randomDouble(){
         Random r = new Random();
         int m = 1;

@@ -8,17 +8,17 @@ import jrazek.faces.recognition.utils.Utils;
 import javax.management.RuntimeErrorException;
 
 public class ConvolutionNeuron extends Neuron {
-    private int sizeX;
-    private int sizeY;
-    private int sizeZ;
+    private Utils.Vector3I size;
     private int indexInLayer;
     private Double[][][] weights;
 
 
-    public ConvolutionNeuron(int x, int y, int z) throws RuntimeErrorException {
-        if ((x / 2) * 2 == x || (y / 2) * 2 == y)
+    public ConvolutionNeuron(Utils.Vector3I size) throws RuntimeErrorException {
+        super();
+        if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY() || size.getX() != size.getY())
             throw new RuntimeErrorException(new Error("the Kernel size must be odd number!"));
-        weights = new Double[x][y][z];
+        this.size = size;
+        weights = new Double[size.getX()][size.getY()][size.getZ()];
     }
 
     void initRandomWeights() {
