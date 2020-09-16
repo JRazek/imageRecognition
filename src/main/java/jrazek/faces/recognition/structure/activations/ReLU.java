@@ -6,4 +6,11 @@ public class ReLU implements Activation{
         if(x < 0) return 0;
         else return x;
     }
+
+    @Override
+    public double differentiateWRTx(double x) {
+        if(x >= 0)
+            return 1;
+        return 0;
+    }
 }
