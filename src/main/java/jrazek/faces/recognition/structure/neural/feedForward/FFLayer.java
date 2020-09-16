@@ -9,8 +9,4 @@ public abstract class FFLayer extends NeuralLayer<FFNeuron> {
         super(net, index);
     }
 
-    @Override
-    public double[][][] getOutput() {
-        return new double[0][][];
-    }
 }

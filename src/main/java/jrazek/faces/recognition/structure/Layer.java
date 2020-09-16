@@ -15,6 +15,5 @@ public abstract class Layer {
     public Net getNet() {
         return net;
     }
-    public abstract double [][][] getOutput();
     public abstract void run();
 }

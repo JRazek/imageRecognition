@@ -11,13 +11,13 @@ import jrazek.faces.recognition.utils.Utils;
 import javax.management.RuntimeErrorException;
 
 public class ConvolutionNeuron extends Neuron {
-    private Utils.Vector3I size;
+    private Utils.Vector3Num<Integer> size;
     private Double[][][] weights;
 
 
-    public ConvolutionNeuron(Layer l, int indexInLayer, Utils.Vector3I size) throws RuntimeErrorException {
+    public ConvolutionNeuron(Layer l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
         super(l, indexInLayer, Rules.convolutionActivation);
-        if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY() || size.getX() != size.getY())
+        if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY() || !size.getX().equals(size.getY()))
             throw new RuntimeErrorException(new Error("the Kernel size must be odd number!"));
         this.size = size;
         weights = new Double[size.getX()][size.getY()][size.getZ()];
@@ -43,9 +43,7 @@ public class ConvolutionNeuron extends Neuron {
     public void run() {
         Layer prev = getLayer().getNet().getLayers().get(getLayer().getIndexInNet() - 1);
         if (prev instanceof ConvolutionalLayer || prev instanceof PoolingLayer) {
-            //prepare chunk to get to here
-            double[][][] input;
-            input = prev.getOutput();
+
         } else {
             //if taking from feed forward layer. not supported in first versions or sure
         }

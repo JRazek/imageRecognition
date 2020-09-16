@@ -5,21 +5,31 @@ import jrazek.faces.recognition.structure.Net;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public abstract class NeuralLayer<T extends Neuron> extends Layer {
-    public List<T> neurons;
+    public Map<Integer, T> neurons;
 
     protected NeuralLayer(Net net, int index) {
         super(net, index);
-        neurons = new LinkedList<>();
+        neurons = new TreeMap<>();
     }
 
     public abstract void initRandom();
 
+    public Map<Integer, T> getNeurons() {
+        return neurons;
+    }
+
+    public void addNeuron(T neuron) {
+        this.neurons.put(neurons.size(), neuron);
+    }
+
     @Override
     public void run() {
-        for(Neuron n : neurons){
-            n.run();
+        for(Map.Entry<Integer, T> entry: neurons.entrySet()){
+            entry.getValue().run();
         }
     }
 }

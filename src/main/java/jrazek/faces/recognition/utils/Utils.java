@@ -2,52 +2,49 @@ package jrazek.faces.recognition.utils;
 
 
 import javax.management.RuntimeErrorException;
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class Utils {
-    public static class Vector2D{
-        private double x, y;
-        public Vector2D(double x, double y){
+    public static class Vector2Num<T extends Number>{
+        private T x, y;
+        public Vector2Num(T x, T y){
             this.x = x; this.y = y;
         }
-        public double getX() {
+        public T getX() {
             return x;
         }
-        public double getY() {
+        public T getY() {
             return y;
         }
-        public void setX(double x) {
+        public void setX(T x) {
             this.x = x;
         }
-        public void setY(double y) {
+        public void setY(T y) {
             this.y = y;
-        }
-        public void add(Vector2D adder){
-            x = x + adder.getX();
-            y = y + adder.getY();
         }
     }
 
-    public static class Vector3I{
-        private int x, y, z;
-        public Vector3I(int x, int y, int z){
+    public static class Vector3Num<T extends Number>{
+        private T x, y, z;
+        public Vector3Num(T x, T y, T z){
             this.x = x; this.y = y; this.z = z;
         }
-        public int getX() {
+        public T getX() {
             return x;
         }
-        public int getY() {
+        public T getY() {
             return y;
         }
-        public int getZ(){
+        public T getZ(){
             return z;
         }
-        public void setX(int x) {
+        public void setX(T x) {
             this.x = x;
         }
-        public void setY(int y) {
+        public void setY(T y) {
             this.y = y;
         }
     }
@@ -118,4 +115,16 @@ public class Utils {
             return max;
         }
     }
+    public class Matrix2D{
+        Vector2Num<Integer> size;
+        double [][] values;
+        Matrix2D(Vector2Num<Integer> size){
+            this.size = size;
+            values = new double[size.getX()][size.getY()];
+        }
+        public void set(int x, int y, double value){
+            this.values[x][y] = value;
+        }
+    }
+
 }
