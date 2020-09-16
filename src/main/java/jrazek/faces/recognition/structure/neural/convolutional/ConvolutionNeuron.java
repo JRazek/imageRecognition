@@ -1,6 +1,9 @@
 package jrazek.faces.recognition.structure.neural.convolutional;
 
+import jrazek.faces.recognition.Rules;
 import jrazek.faces.recognition.structure.Layer;
+import jrazek.faces.recognition.structure.activations.Activation;
+import jrazek.faces.recognition.structure.activations.ReLU;
 import jrazek.faces.recognition.structure.neural.Neuron;
 import jrazek.faces.recognition.structure.neural.functional.PoolingLayer;
 import jrazek.faces.recognition.utils.Utils;
@@ -13,8 +16,8 @@ public class ConvolutionNeuron extends Neuron {
     private Double[][][] weights;
 
 
-    public ConvolutionNeuron(Utils.Vector3I size) throws RuntimeErrorException {
-        super();
+    public ConvolutionNeuron(Layer l, int indexInLayer, Utils.Vector3I size) throws RuntimeErrorException {
+        super(l, indexInLayer, Rules.convolutionActivation);
         if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY() || size.getX() != size.getY())
             throw new RuntimeErrorException(new Error("the Kernel size must be odd number!"));
         this.size = size;
@@ -22,17 +25,17 @@ public class ConvolutionNeuron extends Neuron {
     }
 
     void initRandomWeights() {
-        for (int z = 0; z < sizeX; z++) {
-            for (int i = 0; i < sizeX; i++) {
-                for (int j = 0; j < sizeY; j++) {
-                    weights[j][i][z] = Utils.randomDouble(-1, 1);
+        for (int z = 0; z < size.getZ(); z++) {
+            for (int y = 0; y < size.getZ(); y++) {
+                for (int x = 0; x < size.getX(); x++) {
+                    weights[x][y][z] = Utils.randomDouble(-1, 1);
                 }
             }
         }
     }
 
     Double getWeight(int x, int y, int z) throws RuntimeErrorException {
-        if (x < 0 || x > sizeX || y < 0 || y > sizeY || z < 0 || z > sizeZ)
+        if (x < 0 || x > size.getX() || y < 0 || y > size.getY() || z < 0 || z > size.getZ())
             throw new RuntimeErrorException(new Error("Wrong argument!"));
         return weights[x][y][z];
     }
