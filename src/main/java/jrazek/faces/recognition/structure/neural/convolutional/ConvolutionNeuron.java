@@ -12,7 +12,6 @@ import javax.management.RuntimeErrorException;
 
 public class ConvolutionNeuron extends Neuron {
     private Utils.Vector3I size;
-    private int indexInLayer;
     private Double[][][] weights;
 
 

@@ -5,9 +5,9 @@ import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.structure.activations.Activation;
 
 public abstract class Neuron {
-    private Layer layer;
-    private Class<? extends Activation> activation;
-    private int indexInLayer;
+    private final Layer layer;
+    private final Class<? extends Activation> activation;
+    private final int indexInLayer;
     public abstract void run();
     public Layer getLayer(){
         return layer;

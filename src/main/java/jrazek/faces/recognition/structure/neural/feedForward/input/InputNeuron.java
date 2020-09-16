@@ -9,7 +9,7 @@ public class InputNeuron extends FFNeuron {
     }
     @Override
     public void run() {
-
+        //taking from input or previous convolution layer
     }
     //
 }
