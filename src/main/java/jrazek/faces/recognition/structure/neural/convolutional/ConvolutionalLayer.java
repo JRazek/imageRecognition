@@ -15,7 +15,7 @@ import static jrazek.faces.recognition.Rules.kernelSize;
 
 public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implements ConvolutionNetLayer {
 
-    private LinkedList<Utils.Matrix2D> outputBox = new LinkedList<>();
+    private Utils.Matrix3D outputBox;
     private int outputBoxWantedSize;
 
     public ConvolutionalLayer(Net net, int index) {
@@ -31,29 +31,33 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
 
     @Override
     public void initRandom() {
+        int index = getNeurons().size();
+        int z;
+        if(this.getIndexInNet() == 0){
+            z = 3;//RGB
+            outputBoxWantedSize = z;
+        }
+        else {
+            Layer l = getNet().getLayers().get(getIndexInNet()-1);
+            if(l instanceof ConvolutionNetLayer){//
+                z = ((ConvolutionNetLayer) l).getOutputBoxWantedSize();
+
+            }
+            else throw new RuntimeErrorException(new Error("UNSUPPORTED BEHAVIOUR!"));
+        }
+        Utils.Vector3Num<Integer> size = new Utils.Vector3Num<>(kernelSize.getX(), kernelSize.getY(), z );
         for(int i = 0; i < Rules.neuronsPerLayer; i ++){
-            int index = getNeurons().size();
-            int z = 0;
-            if(this.getIndexInNet() == 0){
-                z = 3;//RGB
-                outputBoxWantedSize = z;
-            }
-            else {
-                Layer l = getNet().getLayers().get(getIndexInNet()-1);
-                if(l instanceof ConvolutionNetLayer){//
-                    ((ConvolutionNetLayer) l).getOutputBoxWantedSize();
-                }
-                else throw new RuntimeErrorException(new Error("UNSUPPORTED BEHAVIOUR!"));
-            }
-            Utils.Vector3Num<Integer> size = new Utils.Vector3Num<>(kernelSize.getX(), kernelSize.getY(), z );
             ConvolutionNeuron neuron = new ConvolutionNeuron(this, index, size);
-            //todo width should be calculated from prev...
+            neuron.initRandomWeights();
             super.addNeuron(neuron);
         }
-    }
 
+    }
+    protected void addToBox(){
+
+    }
     @Override
-    public LinkedList<Utils.Matrix2D> getOutputBox() {
+    public Utils.Matrix3D getOutputBox() {
         return outputBox;
     }
 

@@ -11,6 +11,11 @@ public class InputLayer extends FFLayer {
     }
 
     @Override
+    public void run() {
+//take an input
+    }
+
+    @Override
     public void initRandom() {
 
     }

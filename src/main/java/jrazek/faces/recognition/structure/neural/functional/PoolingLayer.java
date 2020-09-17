@@ -5,8 +5,6 @@ import jrazek.faces.recognition.structure.Net;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
 import jrazek.faces.recognition.utils.Utils;
 
-import java.util.LinkedList;
-
 public class PoolingLayer extends Layer implements ConvolutionNetLayer {
     protected PoolingLayer(Net net, int index) {
         super(net, index);
@@ -18,7 +16,7 @@ public class PoolingLayer extends Layer implements ConvolutionNetLayer {
     }
 
     @Override
-    public LinkedList<Utils.Matrix2D> getOutputBox() {
+    public Utils.Matrix3D getOutputBox() {
         return null;
     }
 

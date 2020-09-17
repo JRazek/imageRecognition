@@ -10,6 +10,11 @@ public class FurtherLayer extends FFLayer {
     }
 
     @Override
+    public void run() {
+        //take outputs from prev layer
+    }
+
+    @Override
     public void initRandom() {
 
     }

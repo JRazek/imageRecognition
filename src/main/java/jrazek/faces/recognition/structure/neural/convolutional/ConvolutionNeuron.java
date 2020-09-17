@@ -2,19 +2,16 @@ package jrazek.faces.recognition.structure.neural.convolutional;
 
 import jrazek.faces.recognition.Rules;
 import jrazek.faces.recognition.structure.Layer;
-import jrazek.faces.recognition.structure.activations.Activation;
-import jrazek.faces.recognition.structure.activations.ReLU;
 import jrazek.faces.recognition.structure.neural.Neuron;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
 import jrazek.faces.recognition.structure.neural.functional.PoolingLayer;
 import jrazek.faces.recognition.utils.Utils;
 
 import javax.management.RuntimeErrorException;
-import java.util.LinkedList;
 
 public class ConvolutionNeuron extends Neuron {
-    private Utils.Vector3Num<Integer> size;
-    private Utils.Matrix3D weights;//as matrix 3D?
+    private final Utils.Vector3Num<Integer> size;
+    private Utils.Matrix3D weights;
 
 
     public ConvolutionNeuron(Layer l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
@@ -37,7 +34,7 @@ public class ConvolutionNeuron extends Neuron {
     }
 
     Double getWeight(Utils.Vector3Num<Integer> c) throws RuntimeErrorException {
-        return weights.getValue(c);
+    return weights.getValue(c);
     }
 
     @Override

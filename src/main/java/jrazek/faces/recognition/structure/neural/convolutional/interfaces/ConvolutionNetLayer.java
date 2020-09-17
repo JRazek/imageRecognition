@@ -12,6 +12,6 @@ import java.util.LinkedList;
  * 1D Vector of output and thats why its not used by ff.
  */
 public interface ConvolutionNetLayer {
-    LinkedList<Utils.Matrix2D> getOutputBox();
+    Utils.Matrix3D getOutputBox();
     int getOutputBoxWantedSize();
 }
