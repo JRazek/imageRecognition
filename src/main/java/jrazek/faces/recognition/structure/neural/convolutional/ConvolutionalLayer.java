@@ -40,7 +40,7 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
             }
             else {
                 Layer l = getNet().getLayers().get(getIndexInNet()-1);
-                if(l instanceof ConvolutionNetLayer){
+                if(l instanceof ConvolutionNetLayer){//
                     ((ConvolutionNetLayer) l).getOutputBoxWantedSize();
                 }
                 else throw new RuntimeErrorException(new Error("UNSUPPORTED BEHAVIOUR!"));
