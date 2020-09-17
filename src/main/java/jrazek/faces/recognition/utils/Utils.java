@@ -1,6 +1,8 @@
 package jrazek.faces.recognition.utils;
 
 
+import jrazek.faces.recognition.Rules;
+
 import javax.management.RuntimeErrorException;
 import java.lang.reflect.Array;
 import java.util.List;
@@ -46,6 +48,9 @@ public class Utils {
         }
         public void setY(T y) {
             this.y = y;
+        }
+        public void setZ(T z) {
+            this.z = z;
         }
     }
     public static double randomDouble(){
@@ -122,22 +127,49 @@ public class Utils {
             this.size = size;
             values = new double[size.getX()][size.getY()];
         }
-        public void set(int x, int y, double value){
-            this.values[x][y] = value;
+        public void set(Vector2Num<Integer> c, double value){
+            this.values[c.getX()][c.getY()] = value;
+        }
+        public double get(Vector2Num<Integer> c){
+            return this.values[c.getX()][c.getY()];
+        }
+        public Vector2Num<Integer> getSize() {
+            return size;
+        }
+        public Matrix2D convolve(Matrix2D kernel){
+            if(kernel.getSize().getX() % 2 == 1 && kernel.getSize().getY() % 2 == 1){
+                Matrix2D result = new Matrix2D(new Vector2Num<>(size.getX()-2, size.getY()-2));//tmp todo!
+                for(int y = 1; y < this.size.getY()-1; y++){
+                    for(int x = 1; x < this.size.getX()-1; x++){
+                        for(int j = 0; j < kernel.size.getY(); j++) {
+                            for (int i = 0; i < kernel.size.getX(); i++) {
+                                double factor1 = this.get(new Vector2Num<>(x-1+i, y-1+j));
+                                double factor2 = kernel.get(new Vector2Num<>(i,j));
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
         }
     }
     public static class Matrix3D{
         private Vector3Num<Integer> size;
-        private double [][][] values;
+        private Matrix2D [] values;
         public Matrix3D(Vector3Num<Integer> size){
             this.size = size;
-            values = new double[size.getX()][size.getY()][size.getZ()];
+            for(int i = 0; i < size.getZ(); i ++){
+                values[i] = new Matrix2D(new Vector2Num<>(size.getX(), size.getY()));
+            }
+        }
+        public void setZMatrix(Matrix2D m){
+
         }
         public void set(Vector3Num<Integer> c, double value){
-            this.values[c.getX()][c.getY()][c.getZ()] = value;
+            this.values[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));
         }
         public double getValue(Vector3Num<Integer> c){
-            return this.values[c.getX()][c.getY()][c.getZ()];
+            return this.values[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));
         }
     }
 
