@@ -141,14 +141,19 @@ public class Utils {
                 Matrix2D result = new Matrix2D(new Vector2Num<>(size.getX()-2, size.getY()-2));//tmp todo!
                 for(int y = 1; y < this.size.getY()-1; y++){
                     for(int x = 1; x < this.size.getX()-1; x++){
+                        double sum = 0;
                         for(int j = 0; j < kernel.size.getY(); j++) {
                             for (int i = 0; i < kernel.size.getX(); i++) {
                                 double factor1 = this.get(new Vector2Num<>(x-1+i, y-1+j));
                                 double factor2 = kernel.get(new Vector2Num<>(i,j));
+                                sum += factor1*factor2;
                             }
                         }
+                        //bias todo solve it somehow
+                        result.set(new Vector2Num<>(x-1, y-1), sum);
                     }
                 }
+                return result;
             }
             return null;
         }
