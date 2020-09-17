@@ -18,7 +18,8 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
 
     private Utils.Matrix3D outputBox;
     private int outputBoxCurrentSize;
-    private int outputBoxWantedSize;
+    private int outputBoxWantedSize;//this layers output depth
+    private int kernelDepth;
 
     public ConvolutionalLayer(Net net, int index) {
         super(net, index);
@@ -34,27 +35,26 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
 
     @Override
     public void initRandom() {
+        int wantedNeuronsCount = Rules.neuronsPerLayer;
         int index = getNeurons().size();
-        int z;
-        if(this.getNet().getLayers().get(this.getIndexInNet()-1) instanceof ConvolutionalInputLayer){
-            z = 3;//RGB
-            outputBoxWantedSize = z;
+        Layer prev = getNet().getLayers().get(getIndexInNet()-1);
+        if(prev instanceof ConvolutionNetLayer){//
+            kernelDepth = ((ConvolutionNetLayer) prev).getOutputBoxWantedSize();
         }
-        else {
-            Layer l = getNet().getLayers().get(getIndexInNet()-1);
-            if(l instanceof ConvolutionNetLayer){//
-                z = ((ConvolutionNetLayer) l).getOutputBoxWantedSize();
-            }
-            else throw new RuntimeErrorException(new Error("UNSUPPORTED BEHAVIOUR!"));
-        }
-        Utils.Vector3Num<Integer> size = new Utils.Vector3Num<>(kernelSize.getX(), kernelSize.getY(), z );
-        outputBox = new Utils.Matrix3D(size);
-        for(int i = 0; i < Rules.neuronsPerLayer; i ++){
+        else throw new RuntimeErrorException(new Error("UNSUPPORTED BEHAVIOUR!"));
+
+        Utils.Vector3Num<Integer> neuronSize = new Utils.Vector3Num<>(kernelSize.getX(), kernelSize.getY(), kernelDepth);
+        Utils.Vector3Num<Integer> outputBoxSize = ((ConvolutionNetLayer) prev).getOutputBox().getSize();
+        outputBoxSize = new Utils.Vector3Num<>(outputBoxSize.getX()-2, outputBox.getSize().getY(), wantedNeuronsCount);
+        outputBox = new Utils.Matrix3D(outputBoxSize);
+
+        for(int i = 0; i < wantedNeuronsCount; i ++){
             System.out.println("Here3s");
-            ConvolutionNeuron neuron = new ConvolutionNeuron(this, index, size);
+            ConvolutionNeuron neuron = new ConvolutionNeuron(this, index, neuronSize);
             neuron.initRandomWeights();
             super.addNeuron(neuron);
         }
+        outputBoxWantedSize = wantedNeuronsCount;
 
     }
     protected void addToBox(Utils.Matrix2D m){

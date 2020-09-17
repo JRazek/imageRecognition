@@ -45,7 +45,9 @@ public class ConvolutionNeuron extends Neuron {
             Layer prev = getLayer().getNet().getLayers().get(getLayer().getIndexInNet() - 1);
             if (prev instanceof ConvolutionNetLayer) {
                 Utils.Matrix3D givenMatrix = ((ConvolutionNetLayer) prev).getOutputBox();
+                System.out.println("outputbox for layer " + prev.getIndexInNet() + " = ");
                 Utils.Matrix2D result = new Utils.Matrix2D(givenMatrix.getSize().getX()-2, givenMatrix.getSize().getY()-2);
+                result = result;
                 for (int i = 0; i < givenMatrix.getSize().getZ(); i++) {
                     Utils.Matrix2D tmp = givenMatrix.getZMatrix(i).convolve(this.kernel.getZMatrix(i));
                     result.add(tmp);
