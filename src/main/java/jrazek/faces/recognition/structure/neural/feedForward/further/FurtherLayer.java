@@ -2,7 +2,7 @@ package jrazek.faces.recognition.structure.neural.feedForward.further;
 
 import jrazek.faces.recognition.structure.Net;
 import jrazek.faces.recognition.structure.neural.feedForward.FFLayer;
-//tst
+
 public class FurtherLayer extends FFLayer {
 
     protected FurtherLayer(Net net, int index) {
