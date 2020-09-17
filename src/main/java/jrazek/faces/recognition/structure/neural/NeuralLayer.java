@@ -26,10 +26,4 @@ public abstract class NeuralLayer<T extends Neuron> extends Layer {
         this.neurons.put(neurons.size(), neuron);
     }
 
-    @Override
-    public void run() {
-        for(Map.Entry<Integer, T> entry: neurons.entrySet()){
-            entry.getValue().run();
-        }
-    }
 }

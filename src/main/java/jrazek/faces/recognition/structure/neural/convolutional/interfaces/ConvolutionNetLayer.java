@@ -14,5 +14,4 @@ import java.util.LinkedList;
 public interface ConvolutionNetLayer {
     LinkedList<Utils.Matrix2D> getOutputBox();
     int getOutputBoxWantedSize();
-
 }
