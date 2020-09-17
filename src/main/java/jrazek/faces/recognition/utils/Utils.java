@@ -124,6 +124,12 @@ public class Utils {
         private Vector2Num<Integer> size;
         private double [][] values;
         public Matrix2D(Vector2Num<Integer> size){
+            constructor(size);
+        }
+        public Matrix2D(int x, int y){
+            constructor(new Vector2Num<>(x,y));
+        }
+        private void constructor(Vector2Num<Integer> size){
             this.size = size;
             values = new double[size.getX()][size.getY()];
         }
@@ -132,6 +138,15 @@ public class Utils {
         }
         public double get(Vector2Num<Integer> c){
             return this.values[c.getX()][c.getY()];
+        }
+        public void add(Matrix2D other){
+            if(other.getSize() == this.getSize()){
+                for(int y = 0; y < other.getSize().getY(); y++){
+                    for(int x = 0; x < other.getSize().getX(); x++){
+                        values[x][y] += other.get(new Vector2Num<>(x,y));
+                    }
+                }
+            }else throw new RuntimeException(new Error("ERROR121s"));
         }
         public Vector2Num<Integer> getSize() {
             return size;
@@ -163,13 +178,22 @@ public class Utils {
         private Matrix2D [] values;
         public Matrix3D(Vector3Num<Integer> size){
             this.size = size;
+            values = new Matrix2D[size.getZ()];
             for(int i = 0; i < size.getZ(); i ++){
                 values[i] = new Matrix2D(new Vector2Num<>(size.getX(), size.getY()));
             }
         }
-        public void setZMatrix(Matrix2D m){
-
+        public void setZMatrix(int z, Matrix2D m){
+            values[z] = m;
         }
+        public Matrix2D getZMatrix(int z){
+            return values[z];
+        }
+
+        public Vector3Num<Integer> getSize() {
+            return size;
+        }
+
         public void set(Vector3Num<Integer> c, double value){
             this.values[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));
         }
