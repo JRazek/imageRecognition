@@ -115,15 +115,29 @@ public class Utils {
             return max;
         }
     }
-    public class Matrix2D{
-        Vector2Num<Integer> size;
-        double [][] values;
-        Matrix2D(Vector2Num<Integer> size){
+    public static class Matrix2D{
+        private Vector2Num<Integer> size;
+        private double [][] values;
+        public Matrix2D(Vector2Num<Integer> size){
             this.size = size;
             values = new double[size.getX()][size.getY()];
         }
         public void set(int x, int y, double value){
             this.values[x][y] = value;
+        }
+    }
+    public static class Matrix3D{
+        private Vector3Num<Integer> size;
+        private double [][][] values;
+        public Matrix3D(Vector3Num<Integer> size){
+            this.size = size;
+            values = new double[size.getX()][size.getY()][size.getZ()];
+        }
+        public void set(Vector3Num<Integer> c, double value){
+            this.values[c.getX()][c.getY()][c.getZ()] = value;
+        }
+        public double getValue(Vector3Num<Integer> c){
+            return this.values[c.getX()][c.getY()][c.getZ()];
         }
     }
 

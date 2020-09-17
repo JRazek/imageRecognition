@@ -9,6 +9,7 @@ import jrazek.faces.recognition.utils.Utils;
 
 import javax.management.RuntimeErrorException;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static jrazek.faces.recognition.Rules.kernelSize;
 
@@ -16,8 +17,16 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
 
     private LinkedList<Utils.Matrix2D> outputBox = new LinkedList<>();
     private int outputBoxWantedSize;
+
     public ConvolutionalLayer(Net net, int index) {
         super(net, index);
+    }
+
+    @Override
+    public void run() {
+        for(Map.Entry<Integer, ConvolutionNeuron> entry : super.getNeurons().entrySet()){
+            entry.getValue().run();
+        }
     }
 
     @Override
