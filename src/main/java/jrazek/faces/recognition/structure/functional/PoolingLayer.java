@@ -1,4 +1,4 @@
-package jrazek.faces.recognition.structure.neural.functional;
+package jrazek.faces.recognition.structure.functional;
 
 import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.structure.Net;

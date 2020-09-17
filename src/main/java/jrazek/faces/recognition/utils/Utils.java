@@ -140,13 +140,13 @@ public class Utils {
             return this.values[c.getX()][c.getY()];
         }
         public void add(Matrix2D other){
-            if(other.getSize() == this.getSize()){
+            if(other.getSize().getX() == this.getSize().getX() && other.getSize().getY() == this.getSize().getY()){
                 for(int y = 0; y < other.getSize().getY(); y++){
                     for(int x = 0; x < other.getSize().getX(); x++){
                         values[x][y] += other.get(new Vector2Num<>(x,y));
                     }
                 }
-            }else throw new RuntimeException(new Error("ERROR121s"));
+            }else throw new RuntimeException(new Error("ERROR121s "+ this.getSize() + " != "+ other.getSize()));
         }
         public Vector2Num<Integer> getSize() {
             return size;
