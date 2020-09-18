@@ -134,7 +134,10 @@ public class Utils {
             values = new double[size.getX()][size.getY()];
         }
         public void set(Vector2Num<Integer> c, double value){
-            this.values[c.getX()][c.getY()] = value;
+            if(c.getX() < values.length && c.getY() < values[0].length)
+                this.values[c.getX()][c.getY()] = value;
+            //else throw new Error("ERROR43575");
+            else System.out.println();
         }
         public double get(Vector2Num<Integer> c){
             return this.values[c.getX()][c.getY()];
@@ -153,9 +156,9 @@ public class Utils {
         }
         public Matrix2D convolve(Matrix2D kernel, int padding, int stride){
             if(kernel.getSize().getX() % 2 == 1 && kernel.getSize().getY() % 2 == 1){
-                Matrix2D result = new Matrix2D(new Vector2Num<>(size.getX()-2, size.getY()-2));//tmp todo!
-                for(int y = 1; y < this.size.getY()-1; y++){
-                    for(int x = 1; x < this.size.getX()-1; x++){
+                Matrix2D result = new Matrix2D(new Vector2Num<>(afterConvolutionSize(this.size.x, kernel.size.x, padding, stride), afterConvolutionSize(this.size.y, kernel.size.y, padding, stride)));//holy fix in here
+                for(int y = 1; y < this.size.getY()-1; y+=stride){
+                    for(int x = 1; x < this.size.getX()-1; x+=stride){
                         double sum = 0;
                         for(int j = 0; j < kernel.size.getY(); j++) {
                             for (int i = 0; i < kernel.size.getX(); i++) {
@@ -165,7 +168,7 @@ public class Utils {
                             }
                         }
                         //bias todo solve it somehow
-                        result.set(new Vector2Num<>(x-1, y-1), sum);
+                        result.set(new Vector2Num<>(x-1, y-1), sum);//gotta count the responding element!
                     }
                 }
                 return result;
@@ -184,7 +187,9 @@ public class Utils {
             }
         }
         public void setZMatrix(int z, Matrix2D m){
-            values[z] = m;
+            if(m.getSize().getX().equals(this.size.getX())&&m.getSize().getY().equals(this.size.getY()))
+                values[z] = m;
+            else throw new Error("ERROR2342421");
         }
         public Matrix2D getZMatrix(int z){
             return values[z];
@@ -201,5 +206,7 @@ public class Utils {
             return this.values[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));
         }
     }
-
+    public static int afterConvolutionSize(int matrixSize, int kernelSize, int padding, int stride){
+        return  ((matrixSize - kernelSize + 2*padding)/stride)+1;
+    }
 }

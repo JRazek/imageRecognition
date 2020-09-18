@@ -1,15 +1,10 @@
 package jrazek.faces.recognition.structure.neural.convolutional;
 
-import jrazek.faces.recognition.Rules;
-import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.structure.Net;
-import jrazek.faces.recognition.structure.functional.ConvolutionalInputLayer;
 import jrazek.faces.recognition.structure.neural.NeuralLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
 import jrazek.faces.recognition.utils.Utils;
 
-import javax.management.RuntimeErrorException;
-import java.util.LinkedList;
 import java.util.Map;
 
 public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implements ConvolutionNetLayer {
@@ -41,8 +36,8 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     private void init(){
         Utils.Vector3Num<Integer> outputBoxSize;
         this.inputBoxSize = ((ConvolutionNetLayer)getNet().getLayers().get(this.getIndexInNet()-1)).getOutputBox().getSize();
-        int width = (this.inputBoxSize.getX() - getNet().getSettings().getKernelSize().getX() + 2*getNet().getSettings().getPadding()+1)/getNet().getSettings().getStride();
-        int height = (this.inputBoxSize.getY() - getNet().getSettings().getKernelSize().getY() + 2*getNet().getSettings().getPadding()+1)/getNet().getSettings().getStride();
+        int width = Utils.afterConvolutionSize(this.inputBoxSize.getX(), getNet().getSettings().getKernelSize().getX(), getNet().getSettings().getPadding(), getNet().getSettings().getStride());
+        int height = Utils.afterConvolutionSize(this.inputBoxSize.getY(), getNet().getSettings().getKernelSize().getY(), getNet().getSettings().getPadding(), getNet().getSettings().getStride());
         outputBoxSize = new Utils.Vector3Num<>(width, height, getNet().getSettings().getNeuronsPerLayer());
         outputBox = new Utils.Matrix3D(outputBoxSize);
         filledOutputBoxCount = 0;
