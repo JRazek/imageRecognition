@@ -134,10 +134,10 @@ public class Utils {
             values = new double[size.getX()][size.getY()];
         }
         public void set(Vector2Num<Integer> c, double value){
-            if(c.getX() < values.length && c.getY() < values[0].length)
+            if(c.getX() < values.length && c.getY() < values[0].length && c.getX() >= 0  && c.getY() >= 0)
                 this.values[c.getX()][c.getY()] = value;
             //else throw new Error("ERROR43575");
-            else System.out.println();
+            else System.out.println(c.getX() +" " + c.getY());
         }
         public double get(Vector2Num<Integer> c){
             return this.values[c.getX()][c.getY()];
@@ -168,7 +168,7 @@ public class Utils {
                             }
                         }
                         //bias todo solve it somehow
-                        result.set(new Vector2Num<>(x-1, y-1), sum);//gotta count the responding element!
+                        result.set(new Vector2Num<>((x-1)/2, (y-1)/2), sum);//gotta count the responding element!
                     }
                 }
                 return result;
