@@ -1,6 +1,7 @@
 package jrazek.faces.recognition.structure.neural.convolutional;
 
 import jrazek.faces.recognition.structure.Net;
+import jrazek.faces.recognition.structure.activations.Activation;
 import jrazek.faces.recognition.structure.neural.NeuralLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
 import jrazek.faces.recognition.utils.Utils;
@@ -12,8 +13,9 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     private Utils.Vector3Num<Integer> inputBoxSize;
     private Utils.Matrix3D outputBox;
     private int filledOutputBoxCount;
-    public ConvolutionalLayer(Net net, int index) {
-        super(net, index);
+
+    public ConvolutionalLayer(Net net, Activation a, int index) {
+        super(net, a, index);
     }
 
     @Override

@@ -1,13 +1,14 @@
 package jrazek.faces.recognition.structure.neural.feedForward.input;
 
 import jrazek.faces.recognition.structure.Net;
+import jrazek.faces.recognition.structure.activations.Activation;
 import jrazek.faces.recognition.structure.neural.feedForward.FFLayer;
 
 public class InputLayer extends FFLayer {
 
 
-    protected InputLayer(Net net, int index) {
-        super(net, index);
+    protected InputLayer(Net net, Activation a, int index) {
+        super(net, a, index);
     }
 
     @Override

@@ -6,15 +6,29 @@ import jrazek.faces.recognition.structure.activations.Activation;
 
 public abstract class Neuron {
     private final Layer layer;
-    private final Class<? extends Activation> activation;
     private final int indexInLayer;
+
+    private double bias;
+
     public abstract void run();
     public Layer getLayer(){
         return layer;
     }
-    public Neuron(Layer l, int indexInLayer, Class<? extends Activation> a){
+    public Neuron(Layer l, int indexInLayer){
         this.layer = l;
         this.indexInLayer = indexInLayer;
-        this.activation = a;
     }
+
+    public int getIndexInLayer() {
+        return indexInLayer;
+    }
+
+    public void setBias(double bias) {
+        this.bias = bias;
+    }
+
+    public double getBias() {
+        return bias;
+    }
+
 }

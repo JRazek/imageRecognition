@@ -2,6 +2,8 @@ package jrazek.faces.recognition.structure.neural.convolutional;
 
 import jrazek.faces.recognition.Rules;
 import jrazek.faces.recognition.structure.Layer;
+import jrazek.faces.recognition.structure.activations.Activation;
+import jrazek.faces.recognition.structure.activations.ReLU;
 import jrazek.faces.recognition.structure.neural.Neuron;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
 import jrazek.faces.recognition.structure.functional.PoolingLayer;
@@ -15,7 +17,7 @@ public class ConvolutionNeuron extends Neuron {
 
 
     public ConvolutionNeuron(Layer l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
-        super(l, indexInLayer, l.getNet().getSettings().getConvolutionActivation());
+        super(l, indexInLayer);
         if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY() || !size.getX().equals(size.getY()))
             throw new RuntimeErrorException(new Error("the Kernel size must be odd number!"));
         this.size = size;
@@ -47,12 +49,19 @@ public class ConvolutionNeuron extends Neuron {
                 Utils.Matrix3D givenMatrix = ((ConvolutionNetLayer) prev).getOutputBox();
                 System.out.println("outputbox for layer " + prev.getIndexInNet() + " = ");
                 Utils.Matrix2D result = null;
-                for (int i = 0; i < givenMatrix.getSize().getZ(); i++) {
+                for (int z = 0; z < givenMatrix.getSize().getZ(); z++) {
                     int padding = getLayer().getNet().getSettings().getPadding();
                     int stride = getLayer().getNet().getSettings().getStride();
-                    Utils.Matrix2D tmp = givenMatrix.getZMatrix(i).convolve(this.kernel.getZMatrix(i), padding, stride);
-                    if(i == 0){
+                    Utils.Matrix2D tmp = givenMatrix.getZMatrix(z).convolve(this.kernel.getZMatrix(z), padding, stride);
+                    if(z == 0){
                         result = new Utils.Matrix2D(tmp.getSize());
+                    }
+                    for(int y = 0; y < result.getSize().getY(); y++){
+                        for(int x = 0; x < result.getSize().getX(); x++){
+                            Utils.Vector2Num<Integer> c = new Utils.Vector2Num<>(x,y);
+                            double afterActivation = ((ConvolutionalLayer)getLayer()).getActivation().count( result.get(c) + getBias());
+                            result.set(c, afterActivation);
+                        }
                     }
                     result.add(tmp);
                 }

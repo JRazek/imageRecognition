@@ -5,7 +5,7 @@ import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.structure.neural.Neuron;
 
 public abstract class FFNeuron extends Neuron {
-    public FFNeuron(Layer l, int indexInLayer){
-        super(l, indexInLayer, l.getNet().getSettings().getFeedForwardActivation());
+    public FFNeuron(Layer l, int indexInLayer) {
+        super(l, indexInLayer);
     }
 }

@@ -1,6 +1,7 @@
 package jrazek.faces.recognition.structure;
 
 import jrazek.faces.recognition.netSetup.NetSettings;
+import jrazek.faces.recognition.structure.activations.ReLU;
 import jrazek.faces.recognition.structure.functional.ConvolutionalInputLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionalLayer;
 import jrazek.faces.recognition.utils.Utils;
@@ -21,7 +22,7 @@ public class Net {
         layers.put(0, new ConvolutionalInputLayer(this, 0));//todo change not always the first!
         for(int i = 0; i < settings.getConvolutionLayersCount()-1; i ++){
             int index = layers.size();
-            ConvolutionalLayer l = new ConvolutionalLayer(this, index);//just for tests
+            ConvolutionalLayer l = new ConvolutionalLayer(this, new ReLU(), index);//just for tests
             layers.put(index, l);
             l.initRandom();
         }
