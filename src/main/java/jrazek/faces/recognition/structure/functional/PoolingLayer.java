@@ -19,9 +19,4 @@ public class PoolingLayer extends Layer implements ConvolutionNetLayer {
     public Utils.Matrix3D getOutputBox() {
         return null;
     }
-
-    @Override
-    public int getOutputBoxWantedSize() {
-        return 0;
-    }
 }

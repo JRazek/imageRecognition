@@ -140,7 +140,7 @@ public class Utils {
             return this.values[c.getX()][c.getY()];
         }
         public void add(Matrix2D other){
-            if(other.getSize().getX() == this.getSize().getX() && other.getSize().getY() == this.getSize().getY()){
+            if(other.getSize().getX().equals(this.getSize().getX()) && other.getSize().getY().equals(this.getSize().getY())){
                 for(int y = 0; y < other.getSize().getY(); y++){
                     for(int x = 0; x < other.getSize().getX(); x++){
                         values[x][y] += other.get(new Vector2Num<>(x,y));
@@ -151,7 +151,7 @@ public class Utils {
         public Vector2Num<Integer> getSize() {
             return size;
         }
-        public Matrix2D convolve(Matrix2D kernel){
+        public Matrix2D convolve(Matrix2D kernel, int padding, int stride){
             if(kernel.getSize().getX() % 2 == 1 && kernel.getSize().getY() % 2 == 1){
                 Matrix2D result = new Matrix2D(new Vector2Num<>(size.getX()-2, size.getY()-2));//tmp todo!
                 for(int y = 1; y < this.size.getY()-1; y++){
@@ -195,7 +195,7 @@ public class Utils {
         }
 
         public void set(Vector3Num<Integer> c, double value){
-            this.values[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));
+            this.values[c.getZ()].set(new Vector2Num<>(c.getX(), c.getY()), value);
         }
         public double getValue(Vector3Num<Integer> c){
             return this.values[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));

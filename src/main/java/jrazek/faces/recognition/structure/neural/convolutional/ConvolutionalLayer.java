@@ -12,18 +12,13 @@ import javax.management.RuntimeErrorException;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static jrazek.faces.recognition.Rules.kernelSize;
-
 public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implements ConvolutionNetLayer {
 
+    private Utils.Vector3Num<Integer> inputBoxSize;
     private Utils.Matrix3D outputBox;
-    private int outputBoxCurrentSize;
-    private int outputBoxWantedSize;//this layers output depth
-    private int kernelDepth;
-
+    private int filledOutputBoxCount;
     public ConvolutionalLayer(Net net, int index) {
         super(net, index);
-        outputBoxCurrentSize = 0;
     }
 
     @Override
@@ -35,41 +30,33 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
 
     @Override
     public void initRandom() {
-        int wantedNeuronsCount = Rules.neuronsPerLayer;
-        int index = getNeurons().size();
-        Layer prev = getNet().getLayers().get(getIndexInNet()-1);
-        if(prev instanceof ConvolutionNetLayer){//
-            kernelDepth = ((ConvolutionNetLayer) prev).getOutputBoxWantedSize();
+        init();
+        for(int i = 0; i < outputBox.getSize().getZ(); i ++){
+            Utils.Vector3Num<Integer> kernelSize = new Utils.Vector3Num<>(getNet().getSettings().getKernelSize().getX(), getNet().getSettings().getKernelSize().getY(), inputBoxSize.getZ());
+            ConvolutionNeuron cNeuron = new ConvolutionNeuron(this, i, kernelSize);
+            cNeuron.initRandomWeights();
+            addNeuron(cNeuron);
         }
-        else throw new RuntimeErrorException(new Error("UNSUPPORTED BEHAVIOUR!"));
-
-        Utils.Vector3Num<Integer> neuronSize = new Utils.Vector3Num<>(kernelSize.getX(), kernelSize.getY(), kernelDepth);
-        Utils.Vector3Num<Integer> outputBoxSize = ((ConvolutionNetLayer) prev).getOutputBox().getSize();
-        outputBoxSize = new Utils.Vector3Num<>(outputBoxSize.getX()-2, outputBox.getSize().getY(), wantedNeuronsCount);
+    }
+    private void init(){
+        Utils.Vector3Num<Integer> outputBoxSize;
+        this.inputBoxSize = ((ConvolutionNetLayer)getNet().getLayers().get(this.getIndexInNet()-1)).getOutputBox().getSize();
+        int width = (this.inputBoxSize.getX() - getNet().getSettings().getKernelSize().getX() + 2*getNet().getSettings().getPadding()+1)/getNet().getSettings().getStride();
+        int height = (this.inputBoxSize.getY() - getNet().getSettings().getKernelSize().getY() + 2*getNet().getSettings().getPadding()+1)/getNet().getSettings().getStride();
+        outputBoxSize = new Utils.Vector3Num<>(width, height, getNet().getSettings().getNeuronsPerLayer());
         outputBox = new Utils.Matrix3D(outputBoxSize);
-
-        for(int i = 0; i < wantedNeuronsCount; i ++){
-            System.out.println("Here3s");
-            ConvolutionNeuron neuron = new ConvolutionNeuron(this, index, neuronSize);
-            neuron.initRandomWeights();
-            super.addNeuron(neuron);
-        }
-        outputBoxWantedSize = wantedNeuronsCount;
-
+        filledOutputBoxCount = 0;
     }
     protected void addToBox(Utils.Matrix2D m){
-        if(outputBoxCurrentSize != outputBoxWantedSize) {
-            outputBox.setZMatrix(outputBoxCurrentSize, m);
-            outputBoxCurrentSize++;
-        }else throw new RuntimeException(new Error("ERROR12123 " + outputBoxCurrentSize + "==" +outputBoxWantedSize));
+        if(filledOutputBoxCount < outputBox.getSize().getZ()) {
+            outputBox.setZMatrix(filledOutputBoxCount, m);
+        }
+        else throw new Error("ERROR12314");
     }
     @Override
     public Utils.Matrix3D getOutputBox() {
+
         return outputBox;
     }
 
-    @Override
-    public int getOutputBoxWantedSize() {
-        return outputBoxWantedSize;
-    }
 }

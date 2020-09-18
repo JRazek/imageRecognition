@@ -6,13 +6,13 @@ import jrazek.faces.recognition.structure.neural.convolutional.interfaces.Convol
 import jrazek.faces.recognition.utils.Utils;
 
 public class ConvolutionalInputLayer extends Layer implements ConvolutionNetLayer {
-    Utils.Matrix3D tmp = new Utils.Matrix3D(new Utils.Vector3Num<>(100,100,3));
+    Utils.Matrix3D tmp = new Utils.Matrix3D(new Utils.Vector3Num<>(69,69,3));
     public ConvolutionalInputLayer(Net net, int index) {
         super(net, index);
-        for(int z = 0; z < 3; z ++){
-            for(int y = 0; y < 100; y++){
-                for(int x = 0; x < 100; x++){
-                    tmp.set(new Utils.Vector3Num<>(x,y,z), 10);
+        for(int z = 0; z < tmp.getSize().getZ(); z ++){
+            for(int y = 0; y < tmp.getSize().getY(); y++){
+                for(int x = 0; x < tmp.getSize().getX(); x++){
+                    tmp.set(new Utils.Vector3Num<>(x,y,z), 1);
                 }
             }
         }
@@ -22,10 +22,6 @@ public class ConvolutionalInputLayer extends Layer implements ConvolutionNetLaye
         return tmp;
     }
 
-    @Override
-    public int getOutputBoxWantedSize() {
-        return 3;
-    }
 
     @Override
     public void run() {

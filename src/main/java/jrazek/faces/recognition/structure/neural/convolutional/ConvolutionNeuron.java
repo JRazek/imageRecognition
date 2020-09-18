@@ -15,7 +15,7 @@ public class ConvolutionNeuron extends Neuron {
 
 
     public ConvolutionNeuron(Layer l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
-        super(l, indexInLayer, Rules.convolutionActivation);
+        super(l, indexInLayer, l.getNet().getSettings().getConvolutionActivation());
         if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY() || !size.getX().equals(size.getY()))
             throw new RuntimeErrorException(new Error("the Kernel size must be odd number!"));
         this.size = size;
@@ -27,7 +27,7 @@ public class ConvolutionNeuron extends Neuron {
             for (int x = 0; x < size.getX(); x++) {
                 for (int y = 0; y < size.getY(); y++) {
                     double randomValue  = Utils.randomDouble(-1,1);
-                    kernel.set(new Utils.Vector3Num<>(x, y, z), randomValue);
+                    kernel.set(new Utils.Vector3Num<>(x, y, z), 2);
                 }
             }
         }
@@ -47,9 +47,10 @@ public class ConvolutionNeuron extends Neuron {
                 Utils.Matrix3D givenMatrix = ((ConvolutionNetLayer) prev).getOutputBox();
                 System.out.println("outputbox for layer " + prev.getIndexInNet() + " = ");
                 Utils.Matrix2D result = new Utils.Matrix2D(givenMatrix.getSize().getX()-2, givenMatrix.getSize().getY()-2);
-                result = result;
                 for (int i = 0; i < givenMatrix.getSize().getZ(); i++) {
-                    Utils.Matrix2D tmp = givenMatrix.getZMatrix(i).convolve(this.kernel.getZMatrix(i));
+                    int padding = getLayer().getNet().getSettings().getPadding();
+                    int stride = getLayer().getNet().getSettings().getStride();
+                    Utils.Matrix2D tmp = givenMatrix.getZMatrix(i).convolve(this.kernel.getZMatrix(i), padding, stride);
                     result.add(tmp);
                 }
                 ((ConvolutionalLayer) getLayer()).addToBox(result);
