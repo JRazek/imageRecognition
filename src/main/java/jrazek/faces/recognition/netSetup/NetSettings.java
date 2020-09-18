@@ -8,7 +8,7 @@ import jrazek.faces.recognition.utils.Utils;
 public class NetSettings {
     private final Class<? extends Activation> convolutionActivation = ReLU.class;
     private final Class<? extends Activation> feedForwardActivation = Sigmoid.class;
-    private final int convolutionLayersCount = 4;
+    private final int convolutionLayersCount = 5;
     private final int feedForwardLayersCount = 0;
     private final int neuronsPerLayer = 3;
     private final Utils.Vector2Num<Integer> kernelSize = new Utils.Vector2Num<>(3,3);

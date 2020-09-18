@@ -3,6 +3,7 @@ package jrazek.faces.recognition.structure;
 import jrazek.faces.recognition.netSetup.NetSettings;
 import jrazek.faces.recognition.structure.activations.ReLU;
 import jrazek.faces.recognition.structure.functional.ConvolutionalInputLayer;
+import jrazek.faces.recognition.structure.functional.PoolingLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionalLayer;
 import jrazek.faces.recognition.utils.Utils;
 
@@ -22,16 +23,24 @@ public class Net {
         layers.put(0, new ConvolutionalInputLayer(this, 0));//todo change not always the first!
         for(int i = 0; i < settings.getConvolutionLayersCount()-1; i ++){
             int index = layers.size();
-            ConvolutionalLayer l = new ConvolutionalLayer(this, new ReLU(), index);//just for tests
-            layers.put(index, l);
-            l.initRandom();
+            if(i == 3){
+                PoolingLayer l = new PoolingLayer(this, index);
+                layers.put(index, l);
+            }else {
+                ConvolutionalLayer l = new ConvolutionalLayer(this, new ReLU(), index);//just for tests
+                layers.put(index, l);
+                l.initRandom();
+            }
         }
     }
     public void forwardPass(Utils.Matrix3D input){
         int i = 0;
+        //todo feeding first layer!
         for(Map.Entry<Integer, Layer> entry : layers.entrySet()){
-            if(i != 0)
-                entry.getValue().run();
+            entry.getValue().run();
+            if(i == 3){
+                System.out.println();
+            }
             i++;
         }
     }

@@ -11,7 +11,7 @@ import java.util.Map;
 public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implements ConvolutionNetLayer {
 
     private Utils.Vector3Num<Integer> inputBoxSize;
-    private Utils.Matrix3D outputBox;
+    private Utils.Matrix3D outputBox = null;
     private int filledOutputBoxCount;
 
     public ConvolutionalLayer(Net net, Activation a, int index) {

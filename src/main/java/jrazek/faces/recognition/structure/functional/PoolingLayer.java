@@ -6,13 +6,16 @@ import jrazek.faces.recognition.structure.neural.convolutional.interfaces.Convol
 import jrazek.faces.recognition.utils.Utils;
 
 public class PoolingLayer extends Layer implements ConvolutionNetLayer {
-    protected PoolingLayer(Net net, int index) {
+    public PoolingLayer(Net net, int index) {
         super(net, index);
     }
 
     @Override
     public void run() {
-
+        if(getIndexInNet() != 0){
+            Utils.Matrix3D givenMatrix = ((ConvolutionNetLayer) getNet().getLayers().get(getIndexInNet()-1)).getOutputBox();
+            //Utils.Matrix2D result;//todo Max/Avg pooling
+        }
     }
 
     @Override
