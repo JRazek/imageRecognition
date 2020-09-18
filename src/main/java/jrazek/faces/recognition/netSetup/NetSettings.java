@@ -13,7 +13,7 @@ public class NetSettings {
     private final int neuronsPerLayer = 3;
     private final Utils.Vector2Num<Integer> kernelSize = new Utils.Vector2Num<>(3,3);
     private final int padding = 0;
-    private final int stride = 3;
+    private final int stride = 1;
 
     public Class<? extends Activation> getConvolutionActivation() {
         return convolutionActivation;

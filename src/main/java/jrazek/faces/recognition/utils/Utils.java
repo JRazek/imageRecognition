@@ -168,7 +168,7 @@ public class Utils {
                             }
                         }
                         //bias todo solve it somehow
-                        result.set(new Vector2Num<>((x-1)/2, (y-1)/2), sum);//gotta count the responding element!
+                        result.set(new Vector2Num<>((x-1)/stride, (y-1)/stride), sum);//gotta count the responding element!
                     }
                 }
                 return result;
