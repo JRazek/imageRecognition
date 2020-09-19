@@ -154,12 +154,16 @@ public class Utils {
         public Matrix2D convolve(Matrix2D kernel, int padding, int stride){
             if(kernel.getSize().getX() % 2 == 1 && kernel.getSize().getY() % 2 == 1){
                 Matrix2D result = new Matrix2D(new Vector2Num<>(afterConvolutionSize(this.size.x, kernel.size.x, padding, stride), afterConvolutionSize(this.size.y, kernel.size.y, padding, stride)));//holy fix in here
-                for(int y = 1; y < this.size.getY()-1; y+=stride){
-                    for(int x = 1; x < this.size.getX()-1; x+=stride){
+                //int toCenterX = kernel.getSize().getX()/2;
+                //int toCenterY = kernel.getSize().getY()/2;
+                int toCenterX = kernel.getSize().getX()/2;
+                int toCenterY = kernel.getSize().getY()/2;
+                for(int y = toCenterX; y < this.size.getY()-toCenterX; y+=stride){
+                    for(int x = toCenterY; x < this.size.getX()-toCenterY; x+=stride){
                         double sum = 0;
                         for(int j = 0; j < kernel.size.getY(); j++) {
                             for (int i = 0; i < kernel.size.getX(); i++) {
-                                double factor1 = this.get(new Vector2Num<>(x-1+i, y-1+j));
+                                double factor1 = this.get(new Vector2Num<>(x-toCenterX+i, y-toCenterY+j));
                                 double factor2 = kernel.get(new Vector2Num<>(i,j));
                                 sum += factor1*factor2;
                             }
@@ -170,6 +174,9 @@ public class Utils {
                 }
                 return result;
             }
+            return null;
+        }
+        public Matrix3D maxPooling(){
             return null;
         }
     }

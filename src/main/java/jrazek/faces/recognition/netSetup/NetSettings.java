@@ -14,7 +14,7 @@ public class NetSettings {
     private final Utils.Vector2Num<Integer> convolutionKernelSize = new Utils.Vector2Num<>(3,3);
     private final Utils.Vector2Num<Integer> poolingKernelSize = new Utils.Vector2Num<>(2,2);
     private final int padding = 0;
-    private final int stride = 1;
+    private final int stride = 6;
 
     public Class<? extends Activation> getConvolutionActivation() {
         return convolutionActivation;
