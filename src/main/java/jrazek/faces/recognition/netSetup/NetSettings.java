@@ -7,15 +7,19 @@ public class NetSettings {
     private final int neuronsPerLayer = 3;
     private final Utils.Vector2Num<Integer> convolutionKernelSize = new Utils.Vector2Num<>(5,5);
     private final Utils.Vector2Num<Integer> poolingKernelSize = new Utils.Vector2Num<>(2,2);
-    private final int padding = 0;
-    private final int stride = 2;
+    private final int convolutionPadding = 0;
+    private final int convolutionStride = 2;
 
-    public int getStride() {
-        return stride;
+
+    private final int poolingPadding = 0;
+    private final int poolingStride = 1;
+
+    public int getConvolutionStride() {
+        return convolutionStride;
     }
 
-    public int getPadding() {
-        return padding;
+    public int getConvolutionPadding() {
+        return convolutionPadding;
     }
 
     public int getFeedForwardLayersCount() {
@@ -37,5 +41,13 @@ public class NetSettings {
 
     public Utils.Vector2Num<Integer> getPoolingKernelSize() {
         return poolingKernelSize;
+    }
+
+    public int getPoolingStride() {
+        return poolingStride;
+    }
+
+    public int getPoolingPadding() {
+        return poolingPadding;
     }
 }

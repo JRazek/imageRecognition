@@ -8,7 +8,7 @@ public abstract class Neuron {
     private final Layer layer;
     private final int indexInLayer;
 
-    private double bias;
+    private double bias = 0;
 
     public abstract void run();
     public Layer getLayer(){

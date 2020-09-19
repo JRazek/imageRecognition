@@ -40,8 +40,8 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     private void init(){
         Utils.Vector3Num<Integer> outputBoxSize;
         this.inputBoxSize = ((ConvolutionNetLayer)getNet().getLayers().get(this.getIndexInNet()-1)).getOutputBox().getSize();
-        int width = afterConvolutionSize(this.inputBoxSize.getX(), getNet().getSettings().getConvolutionKernelSize().getX(), getNet().getSettings().getPadding(), getNet().getSettings().getStride());
-        int height = afterConvolutionSize(this.inputBoxSize.getY(), getNet().getSettings().getConvolutionKernelSize().getY(), getNet().getSettings().getPadding(), getNet().getSettings().getStride());
+        int width = afterConvolutionSize(this.inputBoxSize.getX(), getNet().getSettings().getConvolutionKernelSize().getX(), getNet().getSettings().getConvolutionPadding(), getNet().getSettings().getConvolutionStride());
+        int height = afterConvolutionSize(this.inputBoxSize.getY(), getNet().getSettings().getConvolutionKernelSize().getY(), getNet().getSettings().getConvolutionPadding(), getNet().getSettings().getConvolutionStride());
         outputBoxSize = new Utils.Vector3Num<>(width, height, getNet().getSettings().getNeuronsPerLayer());
         outputBox = new Utils.Matrix3D(outputBoxSize);
         filledOutputBoxCount = 0;
