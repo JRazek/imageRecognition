@@ -8,10 +8,11 @@ import jrazek.faces.recognition.utils.Utils;
 public class NetSettings {
     private final Class<? extends Activation> convolutionActivation = ReLU.class;
     private final Class<? extends Activation> feedForwardActivation = Sigmoid.class;
-    private final int convolutionLayersCount = 5;
+    private final int convolutionLayersCount = 6;
     private final int feedForwardLayersCount = 0;
     private final int neuronsPerLayer = 3;
-    private final Utils.Vector2Num<Integer> kernelSize = new Utils.Vector2Num<>(3,3);
+    private final Utils.Vector2Num<Integer> convolutionKernelSize = new Utils.Vector2Num<>(3,3);
+    private final Utils.Vector2Num<Integer> poolingKernelSize = new Utils.Vector2Num<>(2,2);
     private final int padding = 0;
     private final int stride = 1;
 
@@ -43,7 +44,11 @@ public class NetSettings {
         return neuronsPerLayer;
     }
 
-    public Utils.Vector2Num<Integer> getKernelSize() {
-        return kernelSize;
+    public Utils.Vector2Num<Integer> getConvolutionKernelSize() {
+        return convolutionKernelSize;
+    }
+
+    public Utils.Vector2Num<Integer> getPoolingKernelSize() {
+        return poolingKernelSize;
     }
 }

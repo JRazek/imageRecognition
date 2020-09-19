@@ -5,6 +5,7 @@ import jrazek.faces.recognition.structure.activations.Activation;
 import jrazek.faces.recognition.structure.neural.NeuralLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
 import jrazek.faces.recognition.utils.Utils;
+import static jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer.afterConvolutionSize;
 
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     public void initRandom() {
         init();
         for(int i = 0; i < outputBox.getSize().getZ(); i ++){
-            Utils.Vector3Num<Integer> kernelSize = new Utils.Vector3Num<>(getNet().getSettings().getKernelSize().getX(), getNet().getSettings().getKernelSize().getY(), inputBoxSize.getZ());
+            Utils.Vector3Num<Integer> kernelSize = new Utils.Vector3Num<>(getNet().getSettings().getConvolutionKernelSize().getX(), getNet().getSettings().getConvolutionKernelSize().getY(), inputBoxSize.getZ());
             ConvolutionNeuron cNeuron = new ConvolutionNeuron(this, i, kernelSize);
             cNeuron.initRandomWeights();
             addNeuron(cNeuron);
@@ -38,8 +39,8 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     private void init(){
         Utils.Vector3Num<Integer> outputBoxSize;
         this.inputBoxSize = ((ConvolutionNetLayer)getNet().getLayers().get(this.getIndexInNet()-1)).getOutputBox().getSize();
-        int width = Utils.afterConvolutionSize(this.inputBoxSize.getX(), getNet().getSettings().getKernelSize().getX(), getNet().getSettings().getPadding(), getNet().getSettings().getStride());
-        int height = Utils.afterConvolutionSize(this.inputBoxSize.getY(), getNet().getSettings().getKernelSize().getY(), getNet().getSettings().getPadding(), getNet().getSettings().getStride());
+        int width = afterConvolutionSize(this.inputBoxSize.getX(), getNet().getSettings().getConvolutionKernelSize().getX(), getNet().getSettings().getPadding(), getNet().getSettings().getStride());
+        int height = afterConvolutionSize(this.inputBoxSize.getY(), getNet().getSettings().getConvolutionKernelSize().getY(), getNet().getSettings().getPadding(), getNet().getSettings().getStride());
         outputBoxSize = new Utils.Vector3Num<>(width, height, getNet().getSettings().getNeuronsPerLayer());
         outputBox = new Utils.Matrix3D(outputBoxSize);
         filledOutputBoxCount = 0;
@@ -52,8 +53,6 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     }
     @Override
     public Utils.Matrix3D getOutputBox() {
-
         return outputBox;
     }
-
 }

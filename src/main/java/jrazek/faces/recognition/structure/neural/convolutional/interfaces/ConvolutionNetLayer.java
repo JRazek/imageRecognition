@@ -13,4 +13,7 @@ import java.util.LinkedList;
  */
 public interface ConvolutionNetLayer {
     Utils.Matrix3D getOutputBox();
+    static int afterConvolutionSize(int matrixSize, int kernelSize, int padding, int stride){
+        return  ((matrixSize - kernelSize + 2*padding)/stride)+1;
+    }
 }

@@ -1,13 +1,10 @@
 package jrazek.faces.recognition.utils;
-
-
-import jrazek.faces.recognition.Rules;
-
 import javax.management.RuntimeErrorException;
-import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import static jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer.afterConvolutionSize;
 
 public class Utils {
     public static class Vector2Num<T extends Number>{
@@ -205,8 +202,5 @@ public class Utils {
         public double getValue(Vector3Num<Integer> c){
             return this.values[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));
         }
-    }
-    public static int afterConvolutionSize(int matrixSize, int kernelSize, int padding, int stride){
-        return  ((matrixSize - kernelSize + 2*padding)/stride)+1;
     }
 }

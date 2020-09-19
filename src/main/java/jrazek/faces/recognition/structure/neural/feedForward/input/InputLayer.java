@@ -13,7 +13,7 @@ public class InputLayer extends FFLayer {
 
     @Override
     public void run() {
-//take an input
+        //take an input
     }
 
     @Override

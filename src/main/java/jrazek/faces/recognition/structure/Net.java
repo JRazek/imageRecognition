@@ -21,7 +21,7 @@ public class Net {
     }
     public void randomInit(){
         layers.put(0, new ConvolutionalInputLayer(this, 0));//todo change not always the first!
-        for(int i = 0; i < settings.getConvolutionLayersCount()-1; i ++){
+        for(int i = 0; i < settings.getConvolutionLayersCount(); i ++){
             int index = layers.size();
             if(i == 3){
                 PoolingLayer l = new PoolingLayer(this, index);
@@ -38,8 +38,8 @@ public class Net {
         //todo feeding first layer!
         for(Map.Entry<Integer, Layer> entry : layers.entrySet()){
             entry.getValue().run();
-            if(i == 3){
-                System.out.println();
+            if(entry.getValue() instanceof PoolingLayer){
+                System.out.println("Pooling Layer");
             }
             i++;
         }
