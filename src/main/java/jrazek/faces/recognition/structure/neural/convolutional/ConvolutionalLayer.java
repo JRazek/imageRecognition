@@ -49,6 +49,7 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     protected void addToBox(Utils.Matrix2D m){
         if(filledOutputBoxCount < outputBox.getSize().getZ()) {
             outputBox.setZMatrix(filledOutputBoxCount, m);
+            filledOutputBoxCount++;
         }
         else throw new Error("ERROR12314");
     }

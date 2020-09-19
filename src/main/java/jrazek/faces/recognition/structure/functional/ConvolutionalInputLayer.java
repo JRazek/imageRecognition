@@ -6,7 +6,7 @@ import jrazek.faces.recognition.structure.neural.convolutional.interfaces.Convol
 import jrazek.faces.recognition.utils.Utils;
 
 public class ConvolutionalInputLayer extends Layer implements ConvolutionNetLayer {
-    Utils.Matrix3D tmp = new Utils.Matrix3D(new Utils.Vector3Num<>(15,15,3));
+    Utils.Matrix3D tmp = new Utils.Matrix3D(new Utils.Vector3Num<>(2000,1000,3));
     public ConvolutionalInputLayer(Net net, int index) {
         super(net, index);
         for(int z = 0; z < tmp.getSize().getZ(); z ++){
