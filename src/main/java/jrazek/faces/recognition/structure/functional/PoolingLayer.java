@@ -8,6 +8,7 @@ import jrazek.faces.recognition.utils.Utils.*;
 
 public class PoolingLayer extends Layer implements ConvolutionNetLayer {
     private Matrix3D outputBox;
+    private int filledOutputCount;
     private Vector2Num<Integer> kernelSize;
     public PoolingLayer(Net net, int index) {
         super(net, index);
@@ -16,6 +17,7 @@ public class PoolingLayer extends Layer implements ConvolutionNetLayer {
         int width = afterConvolutionSize(prevLayerOutputBoxSize.getX(),kernelSize.getX(),net.getSettings().getConvolutionPadding(),net.getSettings().getConvolutionStride());
         int height = afterConvolutionSize(prevLayerOutputBoxSize.getY(),kernelSize.getY(),net.getSettings().getConvolutionPadding(),net.getSettings().getConvolutionStride());
         this.outputBox = new Matrix3D(new Vector3Num<>(width, height, prevLayerOutputBoxSize.getZ()));
+        this.filledOutputCount = 0;
     }
 
     @Override
@@ -25,23 +27,29 @@ public class PoolingLayer extends Layer implements ConvolutionNetLayer {
             int stride = getNet().getSettings().getPoolingStride();
             int padding = getNet().getSettings().getPoolingPadding();
             for(int z = 0; z < givenMatrix.getSize().getZ(); z++){
-                for(int y = 0; y < givenMatrix.getSize().getY(); y+=stride){
-                    for(int x = 0; x < givenMatrix.getSize().getX(); x+=stride){
-
+                Matrix2D result = new Matrix2D(outputBox.getSize().getX(), outputBox.getSize().getY());
+                for(int y = 0; y < outputBox.getSize().getY(); y+=stride){
+                    for(int x = 0; x < outputBox.getSize().getX(); x+=stride){
+                        double max = 0;
                         for(int j = 0; j < kernelSize.getY(); j++){
                             for(int i = 0; i < kernelSize.getX(); i++){
-
+                                double val = givenMatrix.getZMatrix(z).get(new Vector2Num<>(x+i, y+j));
+                                if(val > max)
+                                    max = val;
                             }
                         }
+                        result.set(new Vector2Num<>(x/stride, y/stride), max);
                     }
                 }
+                outputBox.setZMatrix(filledOutputCount, result);
+                filledOutputCount++;
             }
         }
     }
 
     @Override
     public Matrix3D getOutputBox() {
-        return ((ConvolutionNetLayer)getNet().getLayers().get(getIndexInNet()-1)).getOutputBox();
+        return outputBox;
     }
 
 }

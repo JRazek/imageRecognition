@@ -24,7 +24,7 @@ public class Net {
         layers.put(0, new ConvolutionalInputLayer(this, 0));//todo change not always the first!
         for(int i = 0; i < settings.getConvolutionLayersCount(); i ++){
             int index = layers.size();
-            if(i == 3){
+            if(i == 2 || i == 4 || i == 6){
                 PoolingLayer l = new PoolingLayer(this, index);
                 layers.put(index, l);
             }else {
