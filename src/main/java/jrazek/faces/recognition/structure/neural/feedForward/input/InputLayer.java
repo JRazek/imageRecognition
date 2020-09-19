@@ -17,7 +17,7 @@ public class InputLayer extends FFLayer {
     }
 
     @Override
-    public void initRandom() {
+    public void setRandom() {
 
     }
 }

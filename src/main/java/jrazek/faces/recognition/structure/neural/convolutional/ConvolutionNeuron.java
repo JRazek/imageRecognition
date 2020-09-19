@@ -18,7 +18,7 @@ public class ConvolutionNeuron extends Neuron {
 
     public ConvolutionNeuron(Layer l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
         super(l, indexInLayer);
-        if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY() || !size.getX().equals(size.getY()))
+        if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY()/* || !size.getX().equals(size.getY())*/)
             throw new RuntimeErrorException(new Error("the Kernel size must be odd number!"));
         this.size = size;
         kernel = new Utils.Matrix3D(size);
@@ -28,8 +28,8 @@ public class ConvolutionNeuron extends Neuron {
         for (int z = 0; z < size.getZ(); z++) {
             for (int x = 0; x < size.getX(); x++) {
                 for (int y = 0; y < size.getY(); y++) {
-                    double randomValue  = Utils.randomDouble(-1,1);
-                    kernel.set(new Utils.Vector3Num<>(x, y, z), 2);
+                    double randomValue  = Utils.randomDouble(-10,10);
+                    kernel.set(new Utils.Vector3Num<>(x, y, z), randomValue);
                 }
             }
         }

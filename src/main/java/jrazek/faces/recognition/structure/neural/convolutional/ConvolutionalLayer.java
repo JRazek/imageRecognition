@@ -27,7 +27,7 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     }
 
     @Override
-    public void initRandom() {
+    public void setRandom() {
         init();
         for(int i = 0; i < outputBox.getSize().getZ(); i ++){
             Utils.Vector3Num<Integer> kernelSize = new Utils.Vector3Num<>(getNet().getSettings().getConvolutionKernelSize().getX(), getNet().getSettings().getConvolutionKernelSize().getY(), inputBoxSize.getZ());
@@ -35,6 +35,7 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
             cNeuron.initRandomWeights();
             addNeuron(cNeuron);
         }
+        System.out.println();
     }
     private void init(){
         Utils.Vector3Num<Integer> outputBoxSize;

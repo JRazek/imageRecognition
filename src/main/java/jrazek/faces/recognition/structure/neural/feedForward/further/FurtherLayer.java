@@ -16,7 +16,7 @@ public class FurtherLayer extends FFLayer {
     }
 
     @Override
-    public void initRandom() {
+    public void setRandom() {
 
     }
 

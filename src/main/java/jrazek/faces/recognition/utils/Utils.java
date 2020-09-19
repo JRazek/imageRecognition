@@ -59,7 +59,9 @@ public class Utils {
     }
     public static double randomDouble(double min, double max){
         Random r = new Random();
-        return min + (max - min) * r.nextDouble();
+        double x = min + (max - min) * r.nextDouble();
+        //System.out.println(x);
+        return x;
     }
     public static int valuesMapSize(Map<?, List<?>> map){
         int sum = 0;
@@ -154,12 +156,10 @@ public class Utils {
         public Matrix2D convolve(Matrix2D kernel, int padding, int stride){
             if(kernel.getSize().getX() % 2 == 1 && kernel.getSize().getY() % 2 == 1){
                 Matrix2D result = new Matrix2D(new Vector2Num<>(afterConvolutionSize(this.size.x, kernel.size.x, padding, stride), afterConvolutionSize(this.size.y, kernel.size.y, padding, stride)));//holy fix in here
-                //int toCenterX = kernel.getSize().getX()/2;
-                //int toCenterY = kernel.getSize().getY()/2;
                 int toCenterX = kernel.getSize().getX()/2;
                 int toCenterY = kernel.getSize().getY()/2;
-                for(int y = toCenterX; y < this.size.getY()-toCenterX; y+=stride){
-                    for(int x = toCenterY; x < this.size.getX()-toCenterY; x+=stride){
+                for(int y = toCenterY; y < this.size.getY()-toCenterY; y+=stride){
+                    for(int x = toCenterX; x < this.size.getX()-toCenterX; x+=stride){
                         double sum = 0;
                         for(int j = 0; j < kernel.size.getY(); j++) {
                             for (int i = 0; i < kernel.size.getX(); i++) {
@@ -169,7 +169,7 @@ public class Utils {
                             }
                         }
                         //bias todo solve it somehow
-                        result.set(new Vector2Num<>((x-1)/stride, (y-1)/stride), sum);//gotta count the responding element!
+                        result.set(new Vector2Num<>((x-toCenterX)/stride, (y-toCenterY)/stride), sum);
                     }
                 }
                 return result;

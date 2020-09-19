@@ -5,6 +5,7 @@ import jrazek.faces.recognition.structure.activations.ReLU;
 import jrazek.faces.recognition.structure.functional.ConvolutionalInputLayer;
 import jrazek.faces.recognition.structure.functional.PoolingLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionalLayer;
+import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
 import jrazek.faces.recognition.utils.Utils;
 
 import java.util.Map;
@@ -29,9 +30,10 @@ public class Net {
             }else {
                 ConvolutionalLayer l = new ConvolutionalLayer(this, new ReLU(), index);//just for tests
                 layers.put(index, l);
-                l.initRandom();
+                l.setRandom();
             }
         }
+        System.out.println();
     }
     public void forwardPass(Utils.Matrix3D input){
         int i = 0;
@@ -42,6 +44,20 @@ public class Net {
                 System.out.println("Pooling Layer");
             }
             i++;
+        }
+    }
+    public void showResultBox(){
+        if(layers.get(layers.size()-1) instanceof ConvolutionNetLayer){
+            Utils.Matrix3D box = ((ConvolutionNetLayer) layers.get(layers.size()-1)).getOutputBox();
+            for(int z = 0; z < box.getSize().getZ(); z++){
+                for(int y = 0; y < box.getSize().getY(); y++){
+                    for(int x = 0; x < box.getSize().getX(); x++){
+                        System.out.print(box.getValue(new Utils.Vector3Num<>(x,y,z)) + " ");
+                    }
+                    System.out.println();
+                }
+                System.out.println("\n\n");
+            }
         }
     }
 

@@ -18,7 +18,7 @@ public abstract class NeuralLayer<T extends Neuron> extends Layer {
         this.activation = a;
     }
 
-    public abstract void initRandom();
+    public abstract void setRandom();
 
     public Activation getActivation() {
         return activation;
