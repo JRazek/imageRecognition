@@ -3,6 +3,7 @@ package jrazek.faces.recognition.structure;
 import jrazek.faces.recognition.netSetup.NetSettings;
 import jrazek.faces.recognition.structure.activations.ReLU;
 import jrazek.faces.recognition.structure.functional.ConvolutionalInputLayer;
+import jrazek.faces.recognition.structure.functional.FlatteningLayer;
 import jrazek.faces.recognition.structure.functional.PoolingLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionalLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
@@ -33,6 +34,7 @@ public class Net {
                 l.setRandom();
             }
         }
+        layers.put(layers.size(), new FlatteningLayer(this, layers.size()));
         System.out.println();
     }
     public void forwardPass(Utils.Matrix3D input){
@@ -42,6 +44,9 @@ public class Net {
             entry.getValue().run();
             if(entry.getValue() instanceof PoolingLayer){
                 System.out.println("Pooling Layer");
+            }
+            if(entry.getValue() instanceof FlatteningLayer){
+                System.out.println("Flattening Layer");
             }
             i++;
         }
