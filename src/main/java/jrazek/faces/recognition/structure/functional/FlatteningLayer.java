@@ -10,10 +10,12 @@ public class FlatteningLayer extends Layer {
     Utils.Matrix3D box;
     public FlatteningLayer(Net net, int index) {
         super(net, index);
-        this.box = ((ConvolutionNetLayer)net.getLayers().get(index-1)).getOutputBox();
-        Utils.Vector3Num<Integer> size = this.box.getSize();
-        int fullSize = (size.getX()*size.getY()*size.getZ());
-        output = new double[fullSize];
+        if(net.getLayers().get(index-1) instanceof ConvolutionNetLayer) {
+            this.box = ((ConvolutionNetLayer) net.getLayers().get(index - 1)).getOutputBox();
+            Utils.Vector3Num<Integer> size = this.box.getSize();
+            int fullSize = (size.getX() * size.getY() * size.getZ());
+            output = new double[fullSize];
+        }else throw new Error("Cannot Flatten the layer not belonging to conv net!");
     }
     @Override
     public void run() {
