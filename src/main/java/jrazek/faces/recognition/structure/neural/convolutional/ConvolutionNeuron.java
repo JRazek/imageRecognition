@@ -10,6 +10,7 @@ import javax.management.RuntimeErrorException;
 public class ConvolutionNeuron extends Neuron {
     private final Utils.Vector3Num<Integer> size;
     private Utils.Matrix3D kernel;
+    private Utils.Matrix2D output;
 
 
     public ConvolutionNeuron(Layer l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
@@ -58,6 +59,7 @@ public class ConvolutionNeuron extends Neuron {
                             tmp.set(c, afterActivation);
                         }
                     }
+                    output = tmp;
                     result.add(tmp);
                 }
                 ((ConvolutionalLayer) getLayer()).addToBox(result);
@@ -66,5 +68,12 @@ public class ConvolutionNeuron extends Neuron {
                 //if taking from feed forward layer. not supported in first versions for sure
             }
         }else throw new RuntimeErrorException(new Error("ERROR234"));
+    }
+    public Utils.Matrix2D getOutput() {
+        return output;
+    }
+
+    public Utils.Matrix3D getKernel() {
+        return kernel;
     }
 }
