@@ -13,7 +13,7 @@ public class BackpropagationModule {
         this.expected = expected;
     }
     //
-    public double differentiateConvolutionWeight(ConvolutionNeuron neuron, Utils.Vector3Num weightPos){
+    public double differentiateConvolutionWeight(ConvolutionNeuron neuron, Utils.Vector3Num<Integer> weightPos){
         neuron.getKernel().getValue(weightPos);
         if(net.getLayers().get(neuron.getIndexInLayer()+1) instanceof ConvolutionalLayer){
 
