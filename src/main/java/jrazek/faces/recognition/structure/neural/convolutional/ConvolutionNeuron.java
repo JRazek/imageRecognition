@@ -10,6 +10,7 @@ import javax.management.RuntimeErrorException;
 public class ConvolutionNeuron extends Neuron {
     private final Utils.Vector3Num<Integer> size;
     private Utils.Matrix3D kernel;
+    private Utils.Matrix2D beforeActivation;
     private Utils.Matrix2D output;
 
 
@@ -44,23 +45,24 @@ public class ConvolutionNeuron extends Neuron {
             Layer prev = getLayer().getNet().getLayers().get(getLayer().getIndexInNet() - 1);
             if (prev instanceof ConvolutionNetLayer) {
                 Utils.Matrix3D givenMatrix = ((ConvolutionNetLayer) prev).getOutputBox();
+                Utils.Matrix2D noActivation = null;
                 Utils.Matrix2D result = null;
                 for (int z = 0; z < givenMatrix.getSize().getZ(); z++) {
                     int padding = getLayer().getNet().getSettings().getConvolutionPadding();
                     int stride = getLayer().getNet().getSettings().getConvolutionStride();
-                    Utils.Matrix2D tmp = ConvolutionNetLayer.convolve(givenMatrix.getZMatrix(z), this.kernel.getZMatrix(z), padding, stride);
+                    this.output = ConvolutionNetLayer.convolve(givenMatrix.getZMatrix(z), this.kernel.getZMatrix(z), padding, stride);
+                    this.beforeActivation = output;
                     if(z == 0){
-                        result = new Utils.Matrix2D(tmp.getSize());
+                        result = new Utils.Matrix2D(output.getSize());
                     }
                     for(int y = 0; y < result.getSize().getY(); y++){
                         for(int x = 0; x < result.getSize().getX(); x++){
                             Utils.Vector2Num<Integer> c = new Utils.Vector2Num<>(x,y);
-                            double afterActivation = ((ConvolutionalLayer)getLayer()).getActivation().count( tmp.get(c) + getBias());
-                            tmp.set(c, afterActivation);
+                            double afterActivation = ((ConvolutionalLayer)getLayer()).getActivation().count( output.get(c) + getBias());
+                            output.set(c, afterActivation);
                         }
                     }
-                    output = tmp;
-                    result.add(tmp);
+                    result.add(output);
                 }
                 ((ConvolutionalLayer) getLayer()).addToBox(result);
             } else {

@@ -1,10 +1,6 @@
 package jrazek.faces.recognition.structure.neural.convolutional.interfaces;
-
-import jdk.jshell.execution.Util;
-import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.utils.Utils;
 
-import java.util.LinkedList;
 
 /**
  * this is actually an interface that is inherited by
