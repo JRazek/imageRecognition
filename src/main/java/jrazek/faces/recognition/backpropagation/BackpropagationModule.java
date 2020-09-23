@@ -22,9 +22,12 @@ public class BackpropagationModule {
             for(Map.Entry<Integer, ConvolutionNeuron> entry : ((ConvolutionalLayer) net.getLayers().get(neuron.getIndexInLayer()+1))
                     .getNeurons().entrySet()){
                 ConvolutionNeuron nextLayerKernel = entry.getValue();
-                
             }
         }
         return 1;
+    }
+    double getChain(){
+
+        return 0;
     }
 }
