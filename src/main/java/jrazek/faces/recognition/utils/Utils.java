@@ -1,10 +1,12 @@
 package jrazek.faces.recognition.utils;
+import jrazek.faces.recognition.structure.neural.Weight;
+import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight;
+import jrazek.faces.recognition.utils.abstracts.Matrix2;
+
 import javax.management.RuntimeErrorException;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import static jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer.afterConvolutionSize;
 
 public class Utils {
     public static class Vector2Num<T extends Number>{
@@ -119,41 +121,19 @@ public class Utils {
             return max;
         }
     }
-    public static class Matrix2D{
-        private Vector2Num<Integer> size;
-        private double [][] values;
+    public static class Matrix2D extends Matrix2<Double> {
         public Matrix2D(Vector2Num<Integer> size){
-            constructor(size);
-        }
-        public Matrix2D(int x, int y){
-            constructor(new Vector2Num<>(x,y));
-        }
-        private void constructor(Vector2Num<Integer> size){
-            this.size = size;
-            values = new double[size.getX()][size.getY()];
-        }
-        public void set(Vector2Num<Integer> c, double value){
-            if(c.getX() < values.length && c.getY() < values[0].length && c.getX() >= 0  && c.getY() >= 0)
-                this.values[c.getX()][c.getY()] = value;
-            //else throw new Error("ERROR43575");
-            else System.out.println(c.getX() +" " + c.getY());
-        }
-        public double get(Vector2Num<Integer> c){
-            return this.values[c.getX()][c.getY()];
+            super(new Double[size.getX()][size.getY()]);
         }
         public void add(Matrix2D other){
             if(other.getSize().getX().equals(this.getSize().getX()) && other.getSize().getY().equals(this.getSize().getY())){
                 for(int y = 0; y < other.getSize().getY(); y++){
                     for(int x = 0; x < other.getSize().getX(); x++){
-                        values[x][y] += other.get(new Vector2Num<>(x,y));
+                        super.getValues()[x][y] += other.get(new Vector2Num<>(x,y));
                     }
                 }
             }else throw new RuntimeException(new Error("ERROR121s "+ this.getSize() + " != "+ other.getSize()));
         }
-        public Vector2Num<Integer> getSize() {
-            return size;
-        }
-
         public Matrix3D maxPooling(){
             return null;
         }
@@ -188,4 +168,42 @@ public class Utils {
             return this.values[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));
         }
     }
+    public static class Kernel extends Matrix2<ConvolutionWeight>{
+        Kernel(Vector2Num<Integer> size){
+            super(new ConvolutionWeight[size.getX()][size.getY()]);
+        }
+    }
+    public static class KernelBox{
+        private Vector3Num<Integer> size;
+        Kernel[] kernels;
+        public KernelBox(Vector3Num<Integer> size){
+            this.size = size;
+            kernels = new Kernel[size.getZ()];
+            for(int i = 0; i < size.getZ(); i ++){
+                kernels[i] = new Kernel(new Vector2Num<>(size.getX(), size.getY()));
+            }
+        }
+        public void setZMatrix(int z, Kernel m){
+            if(m.getSize().getX().equals(this.size.getX())&&m.getSize().getY().equals(this.size.getY()))
+                kernels[z] = m;
+            else throw new Error("ERROR2342421");
+        }
+        public Kernel getZMatrix(int z){
+            return kernels[z];
+        }
+        public Vector3Num<Integer> getSize() {
+            return size;
+        }
+        public void set(Vector3Num<Integer> c, double value){
+            this.kernels[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY())).setValue(value);
+        }
+        public void setWeight(Vector3Num<Integer> c, ConvolutionWeight value){
+            this.kernels[c.getZ()].set(new Vector2Num<>(c.getX(), c.getY()), value);
+        }
+        public ConvolutionWeight getWeight(Vector3Num<Integer> c){
+            return this.kernels[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));
+        }
+
+    }
+
 }

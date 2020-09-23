@@ -27,7 +27,7 @@ public class PoolingLayer extends Layer implements ConvolutionNetLayer {
             int stride = getNet().getSettings().getPoolingStride();
             int padding = getNet().getSettings().getPoolingPadding();
             for(int z = 0; z < givenMatrix.getSize().getZ(); z++){
-                Matrix2D result = new Matrix2D(outputBox.getSize().getX(), outputBox.getSize().getY());
+                Matrix2D result = new Matrix2D(new Vector2Num<>(outputBox.getSize().getX(), outputBox.getSize().getY()));
                 for(int y = 0; y < outputBox.getSize().getY(); y+=stride){
                     for(int x = 0; x < outputBox.getSize().getX(); x+=stride){
                         double max = 0;
