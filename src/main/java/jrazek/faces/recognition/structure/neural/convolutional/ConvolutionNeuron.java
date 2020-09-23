@@ -61,7 +61,7 @@ public class ConvolutionNeuron extends Neuron {
                             output.set(c, afterActivation);
                         }
                     }
-                    result.add(output);//todo switch to output
+                    result.add(output);
                 }
                 ((ConvolutionalLayer) getLayer()).addToBox(result);
             } else {

@@ -4,8 +4,8 @@ import jrazek.faces.recognition.utils.Utils;
 public class NetSettings {
     private final int convolutionLayersCount = 4;
     private final int feedForwardLayersCount = 0;
-    private final int neuronsPerLayer = 2;
-    private final Utils.Vector2Num<Integer> convolutionKernelSize = new Utils.Vector2Num<>(3,3);
+    private final int neuronsPerLayer = 1;
+    private final Utils.Vector2Num<Integer> convolutionKernelSize = new Utils.Vector2Num<>(1,1);
     private final Utils.Vector2Num<Integer> poolingKernelSize = new Utils.Vector2Num<>(2,2);
     private final int convolutionPadding = 0;
     private final int convolutionStride = 2;
