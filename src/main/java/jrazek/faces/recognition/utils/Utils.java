@@ -123,7 +123,7 @@ public class Utils {
     }
     public static class Matrix2D extends Matrix2<Double> {
         public Matrix2D(Vector2Num<Integer> size){
-            super(new Double[size.getX()][size.getY()]);
+            super(createArray(size));
         }
         public void add(Matrix2D other){
             if(other.getSize().getX().equals(this.getSize().getX()) && other.getSize().getY().equals(this.getSize().getY())){
@@ -205,5 +205,13 @@ public class Utils {
         }
 
     }
-
+    public static Double [][] createArray(Vector2Num<Integer> size) {
+        Double[][] arr = new Double[size.getX()][size.getY()];
+        for(int x = 0; x < size.getX(); x++){
+            for (int y = 0; y < size.getY(); y ++) {
+                arr[x][y] = 0d;
+            }
+        }
+        return arr;
+    }
 }

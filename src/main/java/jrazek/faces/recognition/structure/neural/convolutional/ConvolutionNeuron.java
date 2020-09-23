@@ -27,7 +27,7 @@ public class ConvolutionNeuron extends Neuron {
             for (int x = 0; x < size.getX(); x++) {
                 for (int y = 0; y < size.getY(); y++) {
                     double randomValue  = Utils.randomDouble(-1,1);
-                    kernel.set(new Utils.Vector3Num<>(x, y, z), randomValue);
+                    kernel.set(new Utils.Vector3Num<>(x, y, z), 1);
                 }
             }
         }
@@ -45,7 +45,6 @@ public class ConvolutionNeuron extends Neuron {
             Layer prev = getLayer().getNet().getLayers().get(getLayer().getIndexInNet() - 1);
             if (prev instanceof ConvolutionNetLayer) {
                 Utils.Matrix3D givenMatrix = ((ConvolutionNetLayer) prev).getOutputBox();
-                Utils.Matrix2D noActivation = null;
                 Utils.Matrix2D result = null;
                 for (int z = 0; z < givenMatrix.getSize().getZ(); z++) {
                     int padding = getLayer().getNet().getSettings().getConvolutionPadding();
@@ -62,7 +61,7 @@ public class ConvolutionNeuron extends Neuron {
                             output.set(c, afterActivation);
                         }
                     }
-                    result.add(output);
+                    result.add(output);//todo switch to output
                 }
                 ((ConvolutionalLayer) getLayer()).addToBox(result);
             } else {

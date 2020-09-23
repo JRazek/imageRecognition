@@ -6,6 +6,7 @@ public abstract class Matrix2 <T>{
     private Utils.Vector2Num<Integer> size;
     private T [][] values;
     public Matrix2(T[][] matrix){
+        size = new Utils.Vector2Num<>(matrix.length, matrix[0].length);
         values = matrix;
     }
     public void set(Utils.Vector2Num<Integer> c, T value){

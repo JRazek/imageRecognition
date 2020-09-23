@@ -8,18 +8,18 @@ import jrazek.faces.recognition.utils.Utils;
 import static jrazek.faces.recognition.utils.Utils.randomInt;
 
 public class ConvolutionalInputLayer extends Layer implements ConvolutionNetLayer {
-    Utils.Matrix3D tmp = new Utils.Matrix3D(new Utils.Vector3Num<>(2000,1000,10));
+    Utils.Matrix3D tmp = new Utils.Matrix3D(new Utils.Vector3Num<>(100,200,3));
     public ConvolutionalInputLayer(Net net, int index) {
         super(net, index);
         for(int z = 0; z < tmp.getSize().getZ(); z ++){
             for(int y = 0; y < tmp.getSize().getY(); y++){
                 for(int x = 0; x < tmp.getSize().getX(); x++){
                     int rand = randomInt(0,255);
-                    tmp.set(new Utils.Vector3Num<>(x,y,z), rand);
+                    tmp.set(new Utils.Vector3Num<>(x,y,z), 1);
                 }
             }
         }
-        tmp.set(new Utils.Vector3Num<>(5,6,0), 2);
+        tmp.set(new Utils.Vector3Num<>(50,50,0), 10);
     }
     @Override
     public Utils.Matrix3D getOutputBox() {

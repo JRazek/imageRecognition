@@ -25,7 +25,7 @@ public class Net {
         layers.put(0, new ConvolutionalInputLayer(this, 0));//todo change not always the first!
         for(int i = 0; i < settings.getConvolutionLayersCount(); i ++){
             int index = layers.size();
-            if(i == 2 || i == 4 || i == 6){
+            if(i == 4){
                 PoolingLayer l = new PoolingLayer(this, index);
                 layers.put(index, l);
             }else {
@@ -34,8 +34,7 @@ public class Net {
                 l.setRandom();
             }
         }
-        layers.put(layers.size(), new FlatteningLayer(this, layers.size()));
-        System.out.println();
+        //layers.put(layers.size(), new FlatteningLayer(this, layers.size()));
     }
     public void forwardPass(Utils.Matrix3D input){
         int i = 0;
