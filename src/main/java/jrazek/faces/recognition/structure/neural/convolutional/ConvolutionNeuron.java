@@ -9,7 +9,7 @@ import javax.management.RuntimeErrorException;
 
 public class ConvolutionNeuron extends Neuron {
     private final Utils.Vector3Num<Integer> size;
-    private Utils.Matrix3D kernel;
+    private Utils.KernelBox kernel;
     private Utils.Matrix2D beforeActivation;
     private Utils.Matrix2D output;
 
@@ -19,7 +19,7 @@ public class ConvolutionNeuron extends Neuron {
         if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY()/* || !size.getX().equals(size.getY())*/)
             throw new RuntimeErrorException(new Error("the Kernel size must be odd number!"));
         this.size = size;
-        kernel = new Utils.Matrix3D(size);
+        kernel = new Utils.KernelBox(size);
     }
 
     void initRandomWeights() {
@@ -27,14 +27,14 @@ public class ConvolutionNeuron extends Neuron {
             for (int x = 0; x < size.getX(); x++) {
                 for (int y = 0; y < size.getY(); y++) {
                     double randomValue  = Utils.randomDouble(-1,1);
-                    kernel.set(new Utils.Vector3Num<>(x, y, z), 1);
+                    kernel.setWeight(new Utils.Vector3Num<>(x, y, z), new ConvolutionWeight(1d));
                 }
             }
         }
     }
 
     Double getWeight(Utils.Vector3Num<Integer> c) throws RuntimeErrorException {
-        return kernel.getValue(c);
+        return kernel.getWeight(c).getValue();
     }
     public void updateKernel(Utils.Vector3Num<Integer> c, double value){
         kernel.set(c, value);
@@ -74,7 +74,7 @@ public class ConvolutionNeuron extends Neuron {
         return output;
     }
 
-    public Utils.Matrix3D getKernel() {
+    public Utils.KernelBox getKernel() {
         return kernel;
     }
 }

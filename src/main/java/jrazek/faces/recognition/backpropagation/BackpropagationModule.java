@@ -16,7 +16,6 @@ public class BackpropagationModule {
     }
 
     public double differentiateConvolutionWeight(ConvolutionNeuron neuron, Utils.Vector3Num<Integer> weightPos){
-        neuron.getKernel().getValue(weightPos);
         if(net.getLayers().get(neuron.getIndexInLayer()+1) instanceof ConvolutionalLayer){
             double tmp = 0;
             for(Map.Entry<Integer, ConvolutionNeuron> entry : ((ConvolutionalLayer) net.getLayers().get(neuron.getIndexInLayer()+1))
