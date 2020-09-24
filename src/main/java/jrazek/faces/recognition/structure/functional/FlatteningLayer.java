@@ -6,8 +6,8 @@ import jrazek.faces.recognition.structure.neural.convolutional.interfaces.Convol
 import jrazek.faces.recognition.utils.Utils;
 
 public class FlatteningLayer extends Layer {
-    double[] output;
-    Utils.Matrix3D box;
+    private double[] output;
+    private Utils.Matrix3D box;
     public FlatteningLayer(Net net, int index) {
         super(net, index);
         if(net.getLayers().get(index-1) instanceof ConvolutionNetLayer) {
@@ -28,5 +28,9 @@ public class FlatteningLayer extends Layer {
                 }
             }
         }
+    }
+
+    public double[] getOutput() {
+        return output;
     }
 }
