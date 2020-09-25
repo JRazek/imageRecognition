@@ -57,7 +57,11 @@ public class BackpropagationModule {
                     //proceeding to FFLayers
                 }
             }else{
-                //an wrt z
+                //a wrt z
+                double tmp = 0;
+                for(Map.Entry<Integer, ConvolutionNeuron> entry : ((ConvolutionalLayer)(neuron.getLayer().getNet().getLayers().get(neuron.getLayer().getIndexInNet()+1))).getNeurons().entrySet()){
+                    //convolution
+                }
             }
         }
         else if(neuron instanceof FFNeuron){
