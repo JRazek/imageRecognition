@@ -1,4 +1,6 @@
 package jrazek.faces.recognition.structure.neural.convolutional.interfaces;
+import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionNeuron;
+import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight;
 import jrazek.faces.recognition.structure.neural.convolutional.kernels.Kernel;
 import jrazek.faces.recognition.utils.Utils;
 
@@ -36,5 +38,20 @@ public interface ConvolutionNetLayer {
             return result;
         }
         return matrix;
+    }
+
+    static double deConvolutionForWeight(ConvolutionWeight weight){
+        Kernel kernel = weight.getNeuron().getKernelBox().getZMatrix(weight.getPos().getZ());
+        Utils.Matrix2D beforeConvolution = ((ConvolutionNetLayer)weight.getNeuron().getLayer().getNet().getLayers().get((weight.getNeuron().getLayer().getIndexInNet()-1))).getOutputBox().getZMatrix(weight.getPos().getZ());
+        int stride = weight.getNeuron().getLayer().getNet().getSettings().getConvolutionStride();
+        double sum = 0;
+        for (int y = 0; y < kernel.getSize().getY(); y += stride){
+            for(int x = 0; x < kernel.getSize().getX(); x += stride){
+                int addX = weight.getPos().getX();
+                int addY = weight.getPos().getY();
+                sum += beforeConvolution.get(new Utils.Vector2Num<>(x + addX, y + addY));
+            }
+        }
+        return sum;
     }
 }

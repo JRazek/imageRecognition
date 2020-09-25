@@ -80,7 +80,7 @@ public class ConvolutionNeuron extends Neuron {
         return output;
     }
 
-    public KernelBox getKernel() {
+    public KernelBox getKernelBox() {
         return kernel;
     }
 }
