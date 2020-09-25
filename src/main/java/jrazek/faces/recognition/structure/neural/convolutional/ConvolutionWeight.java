@@ -4,11 +4,13 @@ import jrazek.faces.recognition.structure.neural.Weight;
 import jrazek.faces.recognition.utils.Utils;
 
 public class ConvolutionWeight extends Weight {
-    ConvolutionWeight(Double v){
+    ConvolutionWeight(ConvolutionNeuron neuron, Utils.Vector3Num<Integer> pos, Double v){
         super(v);
+        this.neuron = neuron;
+        this.pos = pos;
     }
-    ConvolutionNeuron neuron;
-    Utils.Vector3Num<Integer> pos;
+    private ConvolutionNeuron neuron;
+    private Utils.Vector3Num<Integer> pos;
     public ConvolutionNeuron getNeuron() {
         return neuron;
     }

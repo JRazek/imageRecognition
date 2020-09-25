@@ -3,15 +3,20 @@ package jrazek.faces.recognition.structure.neural.convolutional;
 import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.structure.neural.Neuron;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
+import jrazek.faces.recognition.structure.neural.convolutional.kernels.KernelBox;
 import jrazek.faces.recognition.utils.Utils;
 
 import javax.management.RuntimeErrorException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConvolutionNeuron extends Neuron {
     private final Utils.Vector3Num<Integer> size;
-    private Utils.KernelBox kernel;
+    private KernelBox kernel;
     private Utils.Matrix2D beforeActivation;
     private Utils.Matrix2D output;
+
+    Map<Utils.Vector3Num<Integer>, ConvolutionWeight> correspondingValues = new HashMap<>();
 
 
     public ConvolutionNeuron(Layer l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
@@ -19,7 +24,7 @@ public class ConvolutionNeuron extends Neuron {
         if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY()/* || !size.getX().equals(size.getY())*/)
             throw new RuntimeErrorException(new Error("the Kernel size must be odd number!"));
         this.size = size;
-        kernel = new Utils.KernelBox(size);
+        kernel = new KernelBox(size);
     }
 
     void initRandomWeights() {
@@ -27,7 +32,8 @@ public class ConvolutionNeuron extends Neuron {
             for (int x = 0; x < size.getX(); x++) {
                 for (int y = 0; y < size.getY(); y++) {
                     double randomValue  = Utils.randomDouble(-1,1);
-                    kernel.setWeight(new Utils.Vector3Num<>(x, y, z), new ConvolutionWeight(1d));
+                    Utils.Vector3Num<Integer> pos = new Utils.Vector3Num<>(x, y, z);
+                    kernel.setWeight(pos, new ConvolutionWeight(this, pos,1d));
                 }
             }
         }
@@ -74,7 +80,7 @@ public class ConvolutionNeuron extends Neuron {
         return output;
     }
 
-    public Utils.KernelBox getKernel() {
+    public KernelBox getKernel() {
         return kernel;
     }
 }

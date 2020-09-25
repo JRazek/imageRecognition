@@ -168,43 +168,6 @@ public class Utils {
             return this.values[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));
         }
     }
-    public static class Kernel extends Matrix2<ConvolutionWeight>{
-        Kernel(Vector2Num<Integer> size){
-            super(new ConvolutionWeight[size.getX()][size.getY()]);
-        }
-    }
-    public static class KernelBox{
-        private Vector3Num<Integer> size;
-        Kernel[] kernels;
-        public KernelBox(Vector3Num<Integer> size){
-            this.size = size;
-            kernels = new Kernel[size.getZ()];
-            for(int i = 0; i < size.getZ(); i ++){
-                kernels[i] = new Kernel(new Vector2Num<>(size.getX(), size.getY()));
-            }
-        }
-        public void setZMatrix(int z, Kernel m){
-            if(m.getSize().getX().equals(this.size.getX())&&m.getSize().getY().equals(this.size.getY()))
-                kernels[z] = m;
-            else throw new Error("ERROR2342421");
-        }
-        public Kernel getZMatrix(int z){
-            return kernels[z];
-        }
-        public Vector3Num<Integer> getSize() {
-            return size;
-        }
-        public void set(Vector3Num<Integer> c, double value){
-            this.kernels[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY())).setValue(value);
-        }
-        public void setWeight(Vector3Num<Integer> c, ConvolutionWeight value){
-            this.kernels[c.getZ()].set(new Vector2Num<>(c.getX(), c.getY()), value);
-        }
-        public ConvolutionWeight getWeight(Vector3Num<Integer> c){
-            return this.kernels[c.getZ()].get(new Vector2Num<>(c.getX(), c.getY()));
-        }
-
-    }
     public static Double [][] createArray(Vector2Num<Integer> size) {
         Double[][] arr = new Double[size.getX()][size.getY()];
         for(int x = 0; x < size.getX(); x++){

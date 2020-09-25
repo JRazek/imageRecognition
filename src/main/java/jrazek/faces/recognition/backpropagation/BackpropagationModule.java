@@ -2,7 +2,9 @@ package jrazek.faces.recognition.backpropagation;
 
 import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.structure.Net;
+import jrazek.faces.recognition.structure.functional.ConvolutionalInputLayer;
 import jrazek.faces.recognition.structure.functional.FlatteningLayer;
+import jrazek.faces.recognition.structure.functional.PoolingLayer;
 import jrazek.faces.recognition.structure.neural.Neuron;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionNeuron;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight;
@@ -38,11 +40,14 @@ public class BackpropagationModule {
         return sum;
     }
     public double differentiateConvolutionWeight(ConvolutionWeight weight){
-        double chain = getChain(weight.getNeuron());
+        double chain = 0;
+        for()
+        chain *= getChain(weight);
         return chain;
     }
-    double getChain(Neuron neuron){
+    double getChain(ConvolutionWeight weight){
         double chain = 1;
+        Neuron neuron = weight.getNeuron();
         if(neuron instanceof ConvolutionNeuron){
             if(net.getLayers().get(neuron.getLayer().getIndexInNet()+1) instanceof FlatteningLayer){
                 FlatteningLayer nextLayer = (FlatteningLayer)net.getLayers().get(neuron.getLayer().getIndexInNet()+1);
@@ -52,7 +57,7 @@ public class BackpropagationModule {
                         tmp += 2 * (nextLayer.getOutput()[i] - expected[i]);
                     }
                     chain *= tmp;
-                }
+                }//todo consider the first ever layer
                 else {
                     //proceeding to FFLayers
                 }
@@ -60,8 +65,20 @@ public class BackpropagationModule {
                 //a wrt z
                 double tmp = 0;
                 for(Map.Entry<Integer, ConvolutionNeuron> entry : ((ConvolutionalLayer)(neuron.getLayer().getNet().getLayers().get(neuron.getLayer().getIndexInNet()+1))).getNeurons().entrySet()){
-                    //convolution
+                    Utils.Matrix2D afterConvolution = ((ConvolutionNeuron) neuron).getOutput();
+                    ConvolutionNetLayer prev = (ConvolutionNetLayer)net.getLayers().get((neuron.getLayer().getIndexInNet()-1));
+                    Utils.Matrix3D beforeConvolution = (prev).getOutputBox();
+                    if(prev instanceof ConvolutionalLayer){
+
+
+                    }else if(prev instanceof ConvolutionalInputLayer){
+
+                    }else if(prev instanceof PoolingLayer){
+
+                    }
+                    //here
                 }
+                chain *= tmp;
             }
         }
         else if(neuron instanceof FFNeuron){
