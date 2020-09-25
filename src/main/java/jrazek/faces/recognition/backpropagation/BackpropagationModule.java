@@ -41,14 +41,22 @@ public class BackpropagationModule {
         return sum;
     }
     public double differentiateConvolutionWeight(ConvolutionWeight weight){
-        double chain;
+        double chain = 0;
         if(weight.isZLwrtALm1Set())
             chain = weight.getZLwrtALm1();
         else {
-            chain = ConvolutionNetLayer.deConvolutionForWeight(weight);
+            Kernel kernel = weight.getNeuron().getKernelBox().getZMatrix(weight.getPos().getZ());
+            Utils.Matrix2D beforeConvolution = ((ConvolutionNetLayer)weight.getNeuron().getLayer().getNet().getLayers().get((weight.getNeuron().getLayer().getIndexInNet()-1))).getOutputBox().getZMatrix(weight.getPos().getZ());
+            int stride = weight.getNeuron().getLayer().getNet().getSettings().getConvolutionStride();
+            for (int y = 0; y < kernel.getSize().getY(); y += stride){
+                for(int x = 0; x < kernel.getSize().getX(); x += stride){
+                    int addX = weight.getPos().getX();
+                    int addY = weight.getPos().getY();
+                    chain += beforeConvolution.get(new Utils.Vector2Num<>(x + addX, y + addY))*getChain(weight.getNeuron());
+                }
+            }
             weight.setZLwrtALm1(chain);
         }
-        chain *= getChain(weight.getNeuron());
         return chain;
     }
     double getChain(Neuron neuron){
@@ -70,15 +78,8 @@ public class BackpropagationModule {
                 double tmp = 0;
                 for(Map.Entry<Integer, ConvolutionNeuron> entry : ((ConvolutionalLayer)(neuron.getLayer().getNet().getLayers().get(neuron.getLayer().getIndexInNet()+1))).getNeurons().entrySet()){
                     Utils.Matrix2D afterConvolution = ((ConvolutionNeuron) neuron).getOutput();
-                    ConvolutionNetLayer prev = (ConvolutionNetLayer)net.getLayers().get((neuron.getLayer().getIndexInNet()-1));
-                    Utils.Matrix3D beforeConvolution = (prev).getOutputBox();
-                    if(prev instanceof ConvolutionalLayer){
-                        
-                    }else if(prev instanceof ConvolutionalInputLayer){
+                    ConvolutionNeuron nextNeuron = entry.getValue();
 
-                    }else if(prev instanceof PoolingLayer){
-
-                    }
                     //here
                 }
                 chain *= tmp;

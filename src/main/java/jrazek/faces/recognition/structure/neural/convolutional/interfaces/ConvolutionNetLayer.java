@@ -40,6 +40,9 @@ public interface ConvolutionNetLayer {
         return matrix;
     }
 
+    /**
+     * useless shit for now. It was required to use a different approach.
+     */
     static double deConvolutionForWeight(ConvolutionWeight weight){
         Kernel kernel = weight.getNeuron().getKernelBox().getZMatrix(weight.getPos().getZ());
         Utils.Matrix2D beforeConvolution = ((ConvolutionNetLayer)weight.getNeuron().getLayer().getNet().getLayers().get((weight.getNeuron().getLayer().getIndexInNet()-1))).getOutputBox().getZMatrix(weight.getPos().getZ());
