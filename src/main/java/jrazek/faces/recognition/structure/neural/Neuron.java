@@ -5,7 +5,7 @@ import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.structure.activations.Activation;
 
 public abstract class Neuron {
-    private final Layer layer;
+    private final NeuralLayer<? extends Neuron> layer;
     private final int indexInLayer;
     private double currentChain = 0;
     private boolean isChainSet = false;
@@ -13,10 +13,10 @@ public abstract class Neuron {
     private double bias = 0;
 
     public abstract void run();
-    public Layer getLayer(){
+    public NeuralLayer<? extends Neuron> getLayer(){
         return layer;
     }
-    public Neuron(Layer l, int indexInLayer){
+    public Neuron(NeuralLayer<? extends Neuron> l, int indexInLayer){
         this.layer = l;
         this.indexInLayer = indexInLayer;
     }

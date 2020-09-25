@@ -1,5 +1,6 @@
 package jrazek.faces.recognition;
 
+import jrazek.faces.recognition.backpropagation.BackpropagationModule;
 import jrazek.faces.recognition.netSetup.NetSettings;
 import jrazek.faces.recognition.structure.Net;
 import jrazek.faces.recognition.utils.Utils;

@@ -61,9 +61,9 @@ public class Utils {
     }
     public static double randomDouble(double min, double max){
         Random r = new Random();
-        double x = min + (max - min) * r.nextDouble();
+        return min + (max - min) * r.nextDouble();
         //System.out.println(x);
-        return x;
+       // return x;
     }
     public static int valuesMapSize(Map<?, List<?>> map){
         int sum = 0;
@@ -134,10 +134,20 @@ public class Utils {
                 }
             }else throw new RuntimeException(new Error("ERROR121s "+ this.getSize() + " != "+ other.getSize()));
         }
+        public double[] getAsVector(){
+            double [] vector = new double[super.getSize().getX()*super.getSize().getY()];
+            for(int y = 0; y < super.getSize().getY(); y++){
+                for(int x = 0; x < super.getSize().getX(); x++){
+                    vector[x + y*super.getSize().getY()] = super.get(new Vector2Num<>(x,y));
+                }
+            }
+            return vector;
+        }
         public Matrix3D maxPooling(){
             return null;
         }
     }
+
     public static class Matrix3D{
         private Vector3Num<Integer> size;
         private Matrix2D [] values;

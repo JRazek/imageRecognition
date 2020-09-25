@@ -9,21 +9,6 @@ public class ConvolutionWeight extends Weight {
         this.neuron = neuron;
         this.pos = pos;
     }
-    private double zLwrtALm1;
-    boolean isZLwrtALm1Set = false;
-    public double getZLwrtALm1() {
-        return zLwrtALm1;
-    }
-    public boolean isZLwrtALm1Set() {
-        return isZLwrtALm1Set;
-    }
-    public void setZLwrtALm1(double zLwrtALm1) {
-        this.zLwrtALm1 = zLwrtALm1;
-        isZLwrtALm1Set = true;
-    }
-    public void reset(){
-        isZLwrtALm1Set = false;
-    }
     private ConvolutionNeuron neuron;
     private Utils.Vector3Num<Integer> pos;
     public ConvolutionNeuron getNeuron() {

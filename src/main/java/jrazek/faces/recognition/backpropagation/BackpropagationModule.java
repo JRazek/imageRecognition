@@ -2,15 +2,13 @@ package jrazek.faces.recognition.backpropagation;
 
 import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.structure.Net;
-import jrazek.faces.recognition.structure.functional.ConvolutionalInputLayer;
 import jrazek.faces.recognition.structure.functional.FlatteningLayer;
-import jrazek.faces.recognition.structure.functional.PoolingLayer;
-import jrazek.faces.recognition.structure.neural.Neuron;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionNeuron;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionalLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.kernels.Kernel;
+import jrazek.faces.recognition.structure.neural.convolutional.kernels.KernelBox;
 import jrazek.faces.recognition.structure.neural.feedForward.FFNeuron;
 import jrazek.faces.recognition.structure.neural.feedForward.further.OutputLayer;
 import jrazek.faces.recognition.utils.Utils;
@@ -42,52 +40,48 @@ public class BackpropagationModule {
     }
     public double differentiateConvolutionWeight(ConvolutionWeight weight){
         double chain = 0;
-        if(weight.isZLwrtALm1Set())
-            chain = weight.getZLwrtALm1();
-        else {
-            Kernel kernel = weight.getNeuron().getKernelBox().getZMatrix(weight.getPos().getZ());
-            Utils.Matrix2D beforeConvolution = ((ConvolutionNetLayer)weight.getNeuron().getLayer().getNet().getLayers().get((weight.getNeuron().getLayer().getIndexInNet()-1))).getOutputBox().getZMatrix(weight.getPos().getZ());
-            int stride = weight.getNeuron().getLayer().getNet().getSettings().getConvolutionStride();
-            for (int y = 0; y < kernel.getSize().getY(); y += stride){
-                for(int x = 0; x < kernel.getSize().getX(); x += stride){
-                    int addX = weight.getPos().getX();
-                    int addY = weight.getPos().getY();
-                    chain += beforeConvolution.get(new Utils.Vector2Num<>(x + addX, y + addY))*getChain(weight.getNeuron());
-                }
+        Kernel kernel = weight.getNeuron().getKernelBox().getZMatrix(weight.getPos().getZ());
+        Utils.Matrix2D beforeConvolution = ((ConvolutionNetLayer)weight.getNeuron().getLayer().getNet().getLayers().get((weight.getNeuron().getLayer().getIndexInNet()-1))).getOutputBox().getZMatrix(weight.getPos().getZ());
+        int stride = weight.getNeuron().getLayer().getNet().getSettings().getConvolutionStride();
+        for (int y = 0; y < kernel.getSize().getY(); y += stride){
+            for(int x = 0; x < kernel.getSize().getX(); x += stride){
+                int addX = weight.getPos().getX();
+                int addY = weight.getPos().getY();
+                chain += beforeConvolution.get(new Utils.Vector2Num<>(x + addX, y + addY)) * getConvolutionChain(weight);
             }
-            weight.setZLwrtALm1(chain);
         }
         return chain;
     }
-    double getChain(Neuron neuron){
+    double getConvolutionChain(ConvolutionWeight weight){
         double chain = 1;
-        if(neuron instanceof ConvolutionNeuron){
-            if(net.getLayers().get(neuron.getLayer().getIndexInNet()+1) instanceof FlatteningLayer){
-                FlatteningLayer nextLayer = (FlatteningLayer)net.getLayers().get(neuron.getLayer().getIndexInNet()+1);
-                if(nextLayer.getIndexInNet() + 1 == net.getLayers().size()) {
-                    double tmp = 0;
-                    for (int i = 0; i < nextLayer.getOutput().length; i++) {
-                        tmp += 2 * (nextLayer.getOutput()[i] - expected[i]);
-                    }
-                    chain *= tmp;
-                }//todo consider the first ever layer
-                else {
-                    //proceeding to FFLayers
-                }
-            }else{
+        ConvolutionNeuron neuron = weight.getNeuron();
+        if(net.getLayers().get(neuron.getLayer().getIndexInNet()+1) instanceof FlatteningLayer){
+            FlatteningLayer nextLayer = (FlatteningLayer)net.getLayers().get(neuron.getLayer().getIndexInNet()+1);
+            if(nextLayer.getIndexInNet() + 1 == net.getLayers().size()) {
                 double tmp = 0;
-                for(Map.Entry<Integer, ConvolutionNeuron> entry : ((ConvolutionalLayer)(neuron.getLayer().getNet().getLayers().get(neuron.getLayer().getIndexInNet()+1))).getNeurons().entrySet()){
-                    Utils.Matrix2D afterConvolution = ((ConvolutionNeuron) neuron).getOutput();
-                    ConvolutionNeuron nextNeuron = entry.getValue();
-
-                    //here
+                for (int i = 0; i < nextLayer.getOutput().length; i++) {
+                    tmp += 2 * (nextLayer.getOutput()[i] - expected[i]);
                 }
                 chain *= tmp;
+            }//todo consider the first ever layer
+            else {
+                //proceeding to FFLayers
             }
+        }else{
+            Utils.Matrix2D zMatrix = weight.getNeuron().getBeforeActivation();
+            double [] vector = zMatrix.getAsVector();
+            double tmp = 0;
+            ConvolutionalLayer l = ((ConvolutionalLayer)net.getLayers().get(neuron.getLayer().getIndexInNet()+1));
+            for(Map.Entry<Integer, ConvolutionNeuron> entry : l.getNeurons().entrySet()){
+                ConvolutionNeuron nextLayersNeuron = entry.getValue();
+                for(int i = 0; i < vector.length; i++){
+                    double z = vector[i];
+                    KernelBox kernelBox = nextLayersNeuron.getKernelBox();
+                    //todo...
+                }
+            }
+            chain *= tmp;
         }
-        else if(neuron instanceof FFNeuron){
-
-        }
-        return 0;
+        return chain;
     }
 }
