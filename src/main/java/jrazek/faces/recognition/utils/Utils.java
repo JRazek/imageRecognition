@@ -140,7 +140,8 @@ public class Utils {
         @Override
         public void set(Vector2Num<Integer> c, Double value) {
             super.set(c, value);
-            vector[c.getX()+c.getY()*super.getSize().getY()] = value;
+            int wantedIndex = c.getX()+(c.getY()*super.getSize().getX());
+            vector[wantedIndex] = value;
         }
         public double[] getAsVector(){
             return vector;

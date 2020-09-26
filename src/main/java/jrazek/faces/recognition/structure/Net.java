@@ -5,15 +5,18 @@ import jrazek.faces.recognition.structure.activations.ReLU;
 import jrazek.faces.recognition.structure.functional.ConvolutionalInputLayer;
 import jrazek.faces.recognition.structure.functional.FlatteningLayer;
 import jrazek.faces.recognition.structure.functional.PoolingLayer;
+import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionalLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
 import jrazek.faces.recognition.utils.Utils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class Net {
     private Map<Integer, Layer> layers = new TreeMap<>();
+    private Map<Integer, ConvolutionWeight> weightMap = new HashMap<>();
     private NetSettings settings;
     public Net(NetSettings netSettings){
         this.settings = netSettings;
@@ -34,7 +37,7 @@ public class Net {
                 l.setRandom();
             }
         }
-        //layers.put(layers.size(), new FlatteningLayer(this, layers.size()));
+        layers.put(layers.size(), new FlatteningLayer(this, layers.size()));
     }
     public void forwardPass(Utils.Matrix3D input){
         int i = 0;
@@ -62,7 +65,19 @@ public class Net {
                 }
                 System.out.println("\n\n");
             }
-        }
+        }else
+            if(layers.get(layers.size()-1) instanceof FlatteningLayer){
+                double [] vector = ((FlatteningLayer) layers.get(layers.size()-1)).getOutput();
+                for(int i = 0; i < vector.length; i ++){
+                    System.out.println(vector[i]);
+                }
+            }
+    }
+    public void addWeight(ConvolutionWeight c){
+        weightMap.put(weightMap.size(), c);
+    }
+    public Map<Integer, ConvolutionWeight> getWeightMap() {
+        return weightMap;
     }
 
     public NetSettings getSettings() {

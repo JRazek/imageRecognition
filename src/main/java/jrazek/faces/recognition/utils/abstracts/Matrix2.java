@@ -12,8 +12,8 @@ public abstract class Matrix2 <T>{
     public void set(Utils.Vector2Num<Integer> c, T value){
         if(c.getX() < values.length && c.getY() < values[0].length && c.getX() >= 0  && c.getY() >= 0)
             this.values[c.getX()][c.getY()] = value;
-            //else throw new Error("ERROR43575");
-        else System.out.println(c.getX() +" " + c.getY());
+        else throw new Error("ERROR43575");
+        //else System.out.println(c.getX() +" " + c.getY());
     }
 
     public T get(Utils.Vector2Num<Integer> c){

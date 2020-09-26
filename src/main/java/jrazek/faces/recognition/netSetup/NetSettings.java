@@ -2,13 +2,15 @@ package jrazek.faces.recognition.netSetup;
 import jrazek.faces.recognition.utils.Utils;
 
 public class NetSettings {
-    private final int convolutionLayersCount = 4;
+    private final int convolutionLayersCount = 5;
     private final int feedForwardLayersCount = 0;
     private final int neuronsPerLayer = 1;
-    private final Utils.Vector2Num<Integer> convolutionKernelSize = new Utils.Vector2Num<>(1,1);
+    private final Utils.Vector2Num<Integer> convolutionKernelSize = new Utils.Vector2Num<>(3,3);
     private final Utils.Vector2Num<Integer> poolingKernelSize = new Utils.Vector2Num<>(2,2);
     private final int convolutionPadding = 0;
     private final int convolutionStride = 2;
+
+    private final double gradientRate = 1;
 
 
     private final int poolingPadding = 0;
@@ -30,6 +32,9 @@ public class NetSettings {
         return convolutionLayersCount;
     }
 
+    public double getGradientRate() {
+        return gradientRate;
+    }
 
     public int getNeuronsPerLayer() {
         return neuronsPerLayer;

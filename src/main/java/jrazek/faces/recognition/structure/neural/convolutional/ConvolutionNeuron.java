@@ -31,11 +31,13 @@ public class ConvolutionNeuron extends Neuron {
 
     void initRandomWeights() {
         for (int z = 0; z < size.getZ(); z++) {
-            for (int x = 0; x < size.getX(); x++) {
-                for (int y = 0; y < size.getY(); y++) {
+            for (int y = 0; y < size.getY(); y++) {
+                for (int x = 0; x < size.getX(); x++) {
                     double randomValue  = Utils.randomDouble(-1,1);
                     Utils.Vector3Num<Integer> pos = new Utils.Vector3Num<>(x, y, z);
-                    kernel.setWeight(pos, new ConvolutionWeight(this, pos,1d));
+                    ConvolutionWeight weight = new ConvolutionWeight(this, pos,randomValue);
+                    kernel.setWeight(pos, weight);
+                    getLayer().getNet().addWeight(weight);
                 }
             }
         }
