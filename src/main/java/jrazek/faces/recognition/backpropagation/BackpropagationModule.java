@@ -69,7 +69,7 @@ public class BackpropagationModule {
         double chain = 1;
         Layer nextLayerUnspecified = net.getLayers().get(neuron.getLayer().getIndexInNet()+1);
         if(nextLayerUnspecified instanceof ConvolutionalLayer){
-            
+
         }else if(nextLayerUnspecified instanceof FlatteningLayer){
             //do flatted and error calculus
         }
