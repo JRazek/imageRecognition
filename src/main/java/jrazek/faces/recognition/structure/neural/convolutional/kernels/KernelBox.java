@@ -25,6 +25,9 @@ public class KernelBox{
     public Utils.Vector3Num<Integer> getSize() {
         return size;
     }
+    public int getTotalSize(){
+        return size.getX()*size.getY()*size.getZ();
+    }
     public void set(Utils.Vector3Num<Integer> c, double value){
         this.kernels[c.getZ()].get(new Utils.Vector2Num<>(c.getX(), c.getY())).setValue(value);
     }

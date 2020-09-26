@@ -122,8 +122,10 @@ public class Utils {
         }
     }
     public static class Matrix2D extends Matrix2<Double> {
+        double [] vector;
         public Matrix2D(Vector2Num<Integer> size){
             super(createArray(size));
+            vector = new double[size.getX()*size.getY()];
         }
         public void add(Matrix2D other){
             if(other.getSize().getX().equals(this.getSize().getX()) && other.getSize().getY().equals(this.getSize().getY())){
@@ -134,13 +136,13 @@ public class Utils {
                 }
             }else throw new RuntimeException(new Error("ERROR121s "+ this.getSize() + " != "+ other.getSize()));
         }
+
+        @Override
+        public void set(Vector2Num<Integer> c, Double value) {
+            super.set(c, value);
+            vector[c.getX()+c.getY()*super.getSize().getY()] = value;
+        }
         public double[] getAsVector(){
-            double [] vector = new double[super.getSize().getX()*super.getSize().getY()];
-            for(int y = 0; y < super.getSize().getY(); y++){
-                for(int x = 0; x < super.getSize().getX(); x++){
-                    vector[x + y*super.getSize().getY()] = super.get(new Vector2Num<>(x,y));
-                }
-            }
             return vector;
         }
         public Matrix3D maxPooling(){

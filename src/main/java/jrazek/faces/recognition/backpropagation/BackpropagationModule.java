@@ -13,6 +13,9 @@ import jrazek.faces.recognition.structure.neural.feedForward.FFNeuron;
 import jrazek.faces.recognition.structure.neural.feedForward.further.OutputLayer;
 import jrazek.faces.recognition.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 public class BackpropagationModule {
@@ -56,9 +59,9 @@ public class BackpropagationModule {
         double chain = 1;
         ConvolutionNeuron neuron = weight.getNeuron();
         if(net.getLayers().get(neuron.getLayer().getIndexInNet()+1) instanceof FlatteningLayer){
+            double tmp = 0;
             FlatteningLayer nextLayer = (FlatteningLayer)net.getLayers().get(neuron.getLayer().getIndexInNet()+1);
             if(nextLayer.getIndexInNet() + 1 == net.getLayers().size()) {
-                double tmp = 0;
                 for (int i = 0; i < nextLayer.getOutput().length; i++) {
                     tmp += 2 * (nextLayer.getOutput()[i] - expected[i]);
                 }
@@ -69,15 +72,23 @@ public class BackpropagationModule {
             }
         }else{
             Utils.Matrix2D zMatrix = weight.getNeuron().getBeforeActivation();
-            double [] vector = zMatrix.getAsVector();
+            double [] vectorZ = zMatrix.getAsVector();
             double tmp = 0;
-            ConvolutionalLayer l = ((ConvolutionalLayer)net.getLayers().get(neuron.getLayer().getIndexInNet()+1));
-            for(Map.Entry<Integer, ConvolutionNeuron> entry : l.getNeurons().entrySet()){
-                ConvolutionNeuron nextLayersNeuron = entry.getValue();
-                for(int i = 0; i < vector.length; i++){
-                    double z = vector[i];
-                    KernelBox kernelBox = nextLayersNeuron.getKernelBox();
-                    //todo...
+            ConvolutionalLayer nextLayer = (ConvolutionalLayer) net.getLayers().get(weight.getNeuron().getLayer().getIndexInNet()+1);
+            for(int i = 0; i < vectorZ.length; i ++){
+                double z = vectorZ[i];
+                tmp += weight.getNeuron().getLayer().getActivation().differentiateWRTx(z);
+                for(Map.Entry<Integer, ConvolutionNeuron> neuronEntry : nextLayer.getNeurons().entrySet()){
+                    //iterating neurons
+                    ConvolutionNeuron weightsBox = neuronEntry.getValue();
+                    for(int j = 0; j < weightsBox.getKernelBox().getSize().getZ(); j++){
+                        //iterating neurons layers
+                        ConvolutionWeight [] weightsVector = weightsBox.getKernelBox().getZMatrix(j).getAsVector();
+                        for(int k = 0; k < weightsVector.length; k ++){
+                            ConvolutionWeight convolutionWeight = weightsVector[k];
+                            
+                        }
+                    }
                 }
             }
             chain *= tmp;

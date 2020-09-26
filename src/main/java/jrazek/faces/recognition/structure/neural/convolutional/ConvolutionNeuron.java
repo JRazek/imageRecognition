@@ -4,6 +4,7 @@ import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.structure.neural.NeuralLayer;
 import jrazek.faces.recognition.structure.neural.Neuron;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
+import jrazek.faces.recognition.structure.neural.convolutional.kernels.Kernel;
 import jrazek.faces.recognition.structure.neural.convolutional.kernels.KernelBox;
 import jrazek.faces.recognition.utils.Utils;
 
@@ -40,12 +41,18 @@ public class ConvolutionNeuron extends Neuron {
         }
     }
 
-    Double getWeight(Utils.Vector3Num<Integer> c) throws RuntimeErrorException {
+    public double getWeight(Utils.Vector3Num<Integer> c) throws RuntimeErrorException {
         return kernel.getWeight(c).getValue();
     }
+
+    public Kernel getZKernelAsVector(int z) {
+        return kernel.getZMatrix(z);
+    }
+
     public void updateKernel(Utils.Vector3Num<Integer> c, double value){
         kernel.set(c, value);
     }
+
     @Override
     public void run() {
         if(getLayer().getIndexInNet() != 0) {

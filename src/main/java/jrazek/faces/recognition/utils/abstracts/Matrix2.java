@@ -22,7 +22,9 @@ public abstract class Matrix2 <T>{
     public Utils.Vector2Num<Integer> getSize(){
         return size;
     }
-
+    public int getTotalSize(){
+        return size.getX()*size.getY();
+    }
     public T[][] getValues() {
         return values;
     }
