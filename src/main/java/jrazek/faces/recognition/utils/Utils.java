@@ -123,9 +123,22 @@ public class Utils {
     }
     public static class Matrix2D extends Matrix2<Double> {
         double [] vector;
+        double maxValue;
         public Matrix2D(Vector2Num<Integer> size){
             super(createArray(size));
             vector = new double[size.getX()*size.getY()];
+        }
+
+        public double getMaxValue() {
+            return maxValue;
+        }
+
+        public void setMaxValue(double maxValue) {
+            this.maxValue = maxValue;
+        }
+
+        public void clear(){
+            super.setTotalValue(new Double[super.getSize().getX()][super.getSize().getY()]);
         }
         public void add(Matrix2D other){
             if(other.getSize().getX().equals(this.getSize().getX()) && other.getSize().getY().equals(this.getSize().getY())){
@@ -159,6 +172,11 @@ public class Utils {
             values = new Matrix2D[size.getZ()];
             for(int i = 0; i < size.getZ(); i ++){
                 values[i] = new Matrix2D(new Vector2Num<>(size.getX(), size.getY()));
+            }
+        }
+        public void clear(){
+            for(Matrix2D m : values){
+                m.clear();
             }
         }
         public void setZMatrix(int z, Matrix2D m){

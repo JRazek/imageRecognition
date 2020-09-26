@@ -24,6 +24,12 @@ public abstract class NeuralLayer<T extends Neuron> extends Layer {
         return activation;
     }
 
+    public void resetNeuronsChains(){
+        for(Map.Entry<Integer, T> entry : neurons.entrySet()){
+            entry.getValue().resetChain();
+        }
+    }
+    public abstract void reset();
     public Map<Integer, T> getNeurons() {
         return neurons;
     }

@@ -21,6 +21,8 @@ public abstract class Neuron {
         this.indexInLayer = indexInLayer;
     }
 
+
+
     public int getIndexInLayer() {
         return indexInLayer;
     }
@@ -39,6 +41,9 @@ public abstract class Neuron {
     }
     public double getCurrentChain() {
         return currentChain;
+    }
+    public boolean isChainSet() {
+        return isChainSet;
     }
     public void setCurrentChain(double currentChain) {
         this.currentChain = currentChain;

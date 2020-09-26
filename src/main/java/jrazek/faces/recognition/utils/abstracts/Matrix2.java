@@ -2,12 +2,15 @@ package jrazek.faces.recognition.utils.abstracts;
 
 import jrazek.faces.recognition.utils.Utils;
 
-public abstract class Matrix2 <T>{
+public class Matrix2 <T>{
     private Utils.Vector2Num<Integer> size;
     private T [][] values;
     public Matrix2(T[][] matrix){
         size = new Utils.Vector2Num<>(matrix.length, matrix[0].length);
         values = matrix;
+    }
+    public void setTotalValue(T[][] v){
+        this.values = v;
     }
     public void set(Utils.Vector2Num<Integer> c, T value){
         if(c.getX() < values.length && c.getY() < values[0].length && c.getX() >= 0  && c.getY() >= 0)
@@ -29,7 +32,4 @@ public abstract class Matrix2 <T>{
         return values;
     }
 
-    public void setSize(Utils.Vector2Num<Integer> size) {
-        this.size = size;
-    }
 }

@@ -16,9 +16,7 @@ public class ConvolutionNeuron extends Neuron {
     private final Utils.Vector3Num<Integer> size;
     private KernelBox kernel;
     private Utils.Matrix2D beforeActivation;
-    private Utils.Matrix2D output;
-
-    Map<Utils.Vector3Num<Integer>, ConvolutionWeight> correspondingValues = new HashMap<>();
+    private Utils.Matrix2D output;//z neuronu wychodzi jedynie jeden plaster i idzie do boxa warstwy
 
 
     public ConvolutionNeuron(NeuralLayer<?extends Neuron> l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
@@ -33,7 +31,7 @@ public class ConvolutionNeuron extends Neuron {
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
-                    double randomValue  = Utils.randomDouble(-1,1);
+                    double randomValue  = Utils.randomDouble(0,1);
                     Utils.Vector3Num<Integer> pos = new Utils.Vector3Num<>(x, y, z);
                     ConvolutionWeight weight = new ConvolutionWeight(this, pos,randomValue);
                     kernel.setWeight(pos, weight);
@@ -57,6 +55,7 @@ public class ConvolutionNeuron extends Neuron {
 
     @Override
     public void run() {
+
         if(getLayer().getIndexInNet() != 0) {
             Layer prev = getLayer().getNet().getLayers().get(getLayer().getIndexInNet() - 1);
             if (prev instanceof ConvolutionNetLayer) {
@@ -73,13 +72,15 @@ public class ConvolutionNeuron extends Neuron {
                     for(int y = 0; y < result.getSize().getY(); y++){
                         for(int x = 0; x < result.getSize().getX(); x++){
                             Utils.Vector2Num<Integer> c = new Utils.Vector2Num<>(x,y);
+
                             double afterActivation = (getLayer()).getActivation().count( output.get(c) + getBias());
+
                             output.set(c, afterActivation);
                         }
                     }
                     result.add(output);
                 }
-                ((ConvolutionalLayer) getLayer()).addToBox(result);
+                ((ConvolutionalLayer) getLayer()).addToBox(beforeActivation, result);
             } else {
                 //todo
                 //if taking from feed forward layer. not supported in first versions for sure

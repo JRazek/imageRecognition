@@ -17,6 +17,7 @@ public interface ConvolutionNetLayer {
         return  ((matrixSize - kernelSize + 2*padding)/stride)+1;
     }
     static Utils.Matrix2D convolve(Utils.Matrix2D matrix, Kernel kernel, int padding, int stride){
+        double max = 0;
         if(kernel.getSize().getX() % 2 == 1 && kernel.getSize().getY() % 2 == 1){
             Utils.Matrix2D result = new Utils.Matrix2D(new Utils.Vector2Num<>(afterConvolutionSize(matrix.getSize().getX(), kernel.getSize().getX(), padding, stride), afterConvolutionSize(matrix.getSize().getY(), kernel.getSize().getY(), padding, stride)));//holy fix in here
             int toCenterX = kernel.getSize().getX()/2;
@@ -26,18 +27,22 @@ public interface ConvolutionNetLayer {
                     double sum = 0;
                     for(int j = 0; j < kernel.getSize().getY(); j++) {
                         for (int i = 0; i < kernel.getSize().getX(); i++) {
-                            double factor1 = matrix.get(new Utils.Vector2Num<>(x-toCenterX+i, y-toCenterY+j));
-                            double factor2 = kernel.get(new Utils.Vector2Num<>(i,j)).getValue();
-                            sum += factor1*factor2;
+                            double valueFromMatrix = matrix.get(new Utils.Vector2Num<>(x-toCenterX+i, y-toCenterY+j));
+                            double weight = kernel.get(new Utils.Vector2Num<>(i,j)).getValue();
+                            sum += valueFromMatrix*weight;
+                            if(sum > max) {
+                                max = sum;
+                            }
                         }
                     }
                     //bias todo solve it somehow
                     result.set(new Utils.Vector2Num<>((x-toCenterX)/stride, (y-toCenterY)/stride), sum);
                 }
             }
+            result.setMaxValue(max);
             return result;
         }
-        return matrix;
+        return null;
     }
 
     /**

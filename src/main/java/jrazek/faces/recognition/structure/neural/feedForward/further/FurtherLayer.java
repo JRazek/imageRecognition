@@ -20,4 +20,9 @@ public class FurtherLayer extends FFLayer {
 
     }
 
+    @Override
+    public void reset() {
+
+    }
+
 }

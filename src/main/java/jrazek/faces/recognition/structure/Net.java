@@ -5,6 +5,8 @@ import jrazek.faces.recognition.structure.activations.ReLU;
 import jrazek.faces.recognition.structure.functional.ConvolutionalInputLayer;
 import jrazek.faces.recognition.structure.functional.FlatteningLayer;
 import jrazek.faces.recognition.structure.functional.PoolingLayer;
+import jrazek.faces.recognition.structure.neural.NeuralLayer;
+import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionNeuron;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionalLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer;
@@ -68,8 +70,8 @@ public class Net {
         }else
             if(layers.get(layers.size()-1) instanceof FlatteningLayer){
                 double [] vector = ((FlatteningLayer) layers.get(layers.size()-1)).getOutput();
-                for(int i = 0; i < vector.length; i ++){
-                    System.out.println(vector[i]);
+                for (double v : vector) {
+                    System.out.println(v);
                 }
             }
     }
@@ -78,6 +80,17 @@ public class Net {
     }
     public Map<Integer, ConvolutionWeight> getWeightMap() {
         return weightMap;
+    }
+
+    public void reset(){
+        for(Map.Entry<Integer, Layer> entry : layers.entrySet()){
+            if(entry.getValue() instanceof NeuralLayer){
+                NeuralLayer<ConvolutionNeuron> layer = ((NeuralLayer<ConvolutionNeuron>) entry.getValue());
+                layer.resetNeuronsChains();
+                layer.reset();
+            }
+
+        }
     }
 
     public NetSettings getSettings() {

@@ -20,4 +20,9 @@ public class InputLayer extends FFLayer {
     public void setRandom() {
 
     }
+
+    @Override
+    public void reset() {
+
+    }
 }

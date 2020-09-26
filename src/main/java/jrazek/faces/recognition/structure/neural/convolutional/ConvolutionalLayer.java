@@ -13,10 +13,18 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
 
     private Utils.Vector3Num<Integer> inputBoxSize;
     private Utils.Matrix3D outputBox = null;
+    private Utils.Matrix3D beforeActivationBox = null;
     private int filledOutputBoxCount;
 
     public ConvolutionalLayer(Net net, Activation a, int index) {
         super(net, a, index);
+    }
+
+    @Override
+    public void reset(){
+        outputBox.clear();
+        beforeActivationBox.clear();
+        filledOutputBoxCount = 0;
     }
 
     @Override
@@ -44,11 +52,13 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
         int height = afterConvolutionSize(this.inputBoxSize.getY(), getNet().getSettings().getConvolutionKernelSize().getY(), getNet().getSettings().getConvolutionPadding(), getNet().getSettings().getConvolutionStride());
         outputBoxSize = new Utils.Vector3Num<>(width, height, getNet().getSettings().getNeuronsPerLayer());
         outputBox = new Utils.Matrix3D(outputBoxSize);
+        beforeActivationBox = new Utils.Matrix3D(outputBoxSize);
         filledOutputBoxCount = 0;
     }
-    protected void addToBox(Utils.Matrix2D m){
+    protected void addToBox(Utils.Matrix2D beforeActivation, Utils.Matrix2D afterActivation){
         if(filledOutputBoxCount < outputBox.getSize().getZ()) {
-            outputBox.setZMatrix(filledOutputBoxCount, m);
+            beforeActivationBox.setZMatrix(filledOutputBoxCount, beforeActivation);
+            outputBox.setZMatrix(filledOutputBoxCount, afterActivation);
             filledOutputBoxCount++;
         }
         else throw new Error("ERROR12314");
@@ -56,5 +66,9 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     @Override
     public Utils.Matrix3D getOutputBox() {
         return outputBox;
+    }
+
+    public Utils.Matrix3D getBeforeActivationBox() {
+        return beforeActivationBox;
     }
 }
