@@ -56,6 +56,8 @@ public class BackpropagationModule {
         return chain;
     }
     double getConvolutionChain(ConvolutionWeight weight){
+        if(weight.isChainSet())
+            return weight.getChain();
         double chain = 1;
         ConvolutionNeuron neuron = weight.getNeuron();
         if(net.getLayers().get(neuron.getLayer().getIndexInNet()+1) instanceof FlatteningLayer){
@@ -77,7 +79,7 @@ public class BackpropagationModule {
             ConvolutionalLayer nextLayer = (ConvolutionalLayer) net.getLayers().get(weight.getNeuron().getLayer().getIndexInNet()+1);
             for(int i = 0; i < vectorZ.length; i ++){
                 double z = vectorZ[i];
-                tmp += weight.getNeuron().getLayer().getActivation().differentiateWRTx(z);
+                tmp = weight.getNeuron().getLayer().getActivation().differentiateWRTx(z);
                 for(Map.Entry<Integer, ConvolutionNeuron> neuronEntry : nextLayer.getNeurons().entrySet()){
                     //iterating neurons
                     ConvolutionNeuron weightsBox = neuronEntry.getValue();
@@ -86,13 +88,14 @@ public class BackpropagationModule {
                         ConvolutionWeight [] weightsVector = weightsBox.getKernelBox().getZMatrix(j).getAsVector();
                         for(int k = 0; k < weightsVector.length; k ++){
                             ConvolutionWeight convolutionWeight = weightsVector[k];
-                            
+                            tmp *= convolutionWeight.getValue()*getConvolutionChain(convolutionWeight);
                         }
                     }
                 }
             }
             chain *= tmp;
         }
+        weight.setChain(chain);
         return chain;
     }
 }
