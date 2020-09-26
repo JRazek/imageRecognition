@@ -11,7 +11,8 @@ import jrazek.faces.recognition.structure.neural.convolutional.kernels.Kernel;
 import jrazek.faces.recognition.structure.neural.convolutional.kernels.KernelBox;
 import jrazek.faces.recognition.structure.neural.feedForward.FFNeuron;
 import jrazek.faces.recognition.structure.neural.feedForward.further.OutputLayer;
-import jrazek.faces.recognition.utils.Utils;
+import jrazek.faces.recognition.utils.Utils.*;
+import jrazek.faces.recognition.utils.abstracts.Matrix2;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -52,30 +53,26 @@ public class BackpropagationModule {
     }
     private double differentiateConvolutionWeight(ConvolutionWeight weight){
         double chain = 0;
-        Kernel kernel = weight.getNeuron().getKernelBox().getZMatrix(weight.getPos().getZ());
-        Utils.Matrix2D beforeConvolution = ((ConvolutionNetLayer)weight.getNeuron().getLayer().getNet().getLayers().get((weight.getNeuron().getLayer().getIndexInNet()-1))).getOutputBox().getZMatrix(weight.getPos().getZ());
-        int stride = weight.getNeuron().getLayer().getNet().getSettings().getConvolutionStride();
-        for (int y = 0; y < kernel.getSize().getY(); y += stride){
-            for(int x = 0; x < kernel.getSize().getX(); x += stride){
-                int addX = weight.getPos().getX();
-                int addY = weight.getPos().getY();
-                chain += beforeConvolution.get(new Utils.Vector2Num<>(x + addX, y + addY)) * getConvolutionChain(weight);
+        ConvolutionNeuron neuron = weight.getNeuron();
+        Matrix2D a_Lm1 = ((ConvolutionNetLayer)net.getLayers().get(neuron.getLayer().getIndexInNet()-1)).getOutputBox().getZMatrix(weight.getPos().getZ());
+        for(int y = 0; y < a_Lm1.getSize().getY(); y+= net.getSettings().getConvolutionStride()){
+            for(int x = 0; x < a_Lm1.getSize().getX(); x+= net.getSettings().getConvolutionStride()){
+                double tmp;
+                tmp = a_Lm1.get(new Vector2Num<>(x + weight.getPos().getX(), y + weight.getPos().getY()));
+                tmp *= neuron.getLayer().getActivation().differentiateWRTx(weight.getValue());
+                tmp *= getConvolutionChain(neuron);
             }
         }
         return chain;
     }
     private double getConvolutionChain(ConvolutionNeuron neuron){
         double chain = 1;
-        double[] zVector = neuron.getBeforeActivation().getAsVector();
-        double tmp1 = 0;
-        for(int i = 0; i < zVector.length; i++){
-            double z = zVector[i];
-            double tmp2 = 0;
-            //get corresponding aL-1 to z set
-            neuron.getLayer().getActivation().differentiateWRTx(z);
-            tmp1*=tmp2;
+        Layer nextLayerUnspecified = net.getLayers().get(neuron.getLayer().getIndexInNet()+1);
+        if(nextLayerUnspecified instanceof ConvolutionalLayer){
+            
+        }else if(nextLayerUnspecified instanceof FlatteningLayer){
+            //do flatted and error calculus
         }
-        chain *= tmp1;
         return 1;
     }
 }
