@@ -15,7 +15,7 @@ public class ConvolutionalInputLayer extends Layer implements ConvolutionNetLaye
             for(int y = 0; y < tmp.getSize().getY(); y++){
                 for(int x = 0; x < tmp.getSize().getX(); x++){
                     int rand = randomInt(0,255);
-                    tmp.set(new Utils.Vector3Num<>(x,y,z), 1);
+                    tmp.set(new Utils.Vector3Num<>(x,y,z), rand);
                 }
             }
         }

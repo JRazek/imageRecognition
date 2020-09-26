@@ -17,32 +17,29 @@ public interface ConvolutionNetLayer {
         return  ((matrixSize - kernelSize + 2*padding)/stride)+1;
     }
     static Utils.Matrix2D convolve(Utils.Matrix2D matrix, Kernel kernel, int padding, int stride){
-        double max = 0;
-        if(kernel.getSize().getX() % 2 == 1 && kernel.getSize().getY() % 2 == 1){
-            Utils.Matrix2D result = new Utils.Matrix2D(new Utils.Vector2Num<>(afterConvolutionSize(matrix.getSize().getX(), kernel.getSize().getX(), padding, stride), afterConvolutionSize(matrix.getSize().getY(), kernel.getSize().getY(), padding, stride)));//holy fix in here
-            int toCenterX = kernel.getSize().getX()/2;
-            int toCenterY = kernel.getSize().getY()/2;
-            for(int y = toCenterY; y < matrix.getSize().getY()-toCenterY; y+=stride){
-                for(int x = toCenterX; x < matrix.getSize().getX()-toCenterX; x+=stride){
-                    double sum = 0;
-                    for(int j = 0; j < kernel.getSize().getY(); j++) {
-                        for (int i = 0; i < kernel.getSize().getX(); i++) {
-                            double valueFromMatrix = matrix.get(new Utils.Vector2Num<>(x-toCenterX+i, y-toCenterY+j));
-                            double weight = kernel.get(new Utils.Vector2Num<>(i,j)).getValue();
-                            sum += valueFromMatrix*weight;
-                            if(sum > max) {
-                                max = sum;
-                            }
-                        }
+        int afterConvolutionSizeX = afterConvolutionSize(matrix.getSize().getX(), kernel.getSize().getX(), padding, stride);
+        int afterConvolutionSizeY = afterConvolutionSize(matrix.getSize().getY(), kernel.getSize().getY(), padding, stride);
+        int toCenterX = kernel.getSize().getX()/2;
+        int toCenterY = kernel.getSize().getY()/2;
+        double maxValue = 0;
+        Utils.Matrix2D result = new Utils.Matrix2D(new Utils.Vector2Num<>(afterConvolutionSizeX, afterConvolutionSizeY));
+        for(int y = 0; y < matrix.getSize().getY()-kernel.getSize().getY(); y+= stride){
+            for(int x = 0; x < matrix.getSize().getX()-kernel.getSize().getX(); x+= stride){
+                double sum = 0;
+                for(int j = 0; j < kernel.getSize().getY(); j ++){
+                    for(int i = 0; i < kernel.getSize().getX(); i ++){
+                        sum += matrix.get(new Utils.Vector2Num<>(x + i, y +j));
                     }
-                    //bias todo solve it somehow
-                    result.set(new Utils.Vector2Num<>((x-toCenterX)/stride, (y-toCenterY)/stride), sum);
                 }
+                if(sum > maxValue)
+                    maxValue = sum;
+                int correspondingX = x/stride;
+                int correspondingY = y/stride;
+                result.setMaxValue(maxValue);
+                result.set(new Utils.Vector2Num<>(correspondingX,correspondingY), sum);
             }
-            result.setMaxValue(max);
-            return result;
         }
-        return null;
+        return result;
     }
 
     /**
