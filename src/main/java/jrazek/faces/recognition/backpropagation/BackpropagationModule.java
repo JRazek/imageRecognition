@@ -23,18 +23,7 @@ public class BackpropagationModule {
     double[] expected;
     public BackpropagationModule(Net net){
         this.net = net;
-    }
-    public void backPropagate(double[] expected){
-        this.expected = expected;
-        System.out.println("Loss = " + countLoss());
-        //System.out.println("Weight map size = " + net.getWeightMap().size());
-        for(Map.Entry<Integer, ConvolutionWeight> entry : net.getWeightMap().entrySet()){
-            ConvolutionWeight weight = entry.getValue();
-            double delta = -1*differentiateConvolutionWeight(entry.getValue())*net.getSettings().getGradientRate();
-            weight.setValue(weight.getValue() + delta);
-        }
-    }
-    public double countLoss(){
+    }    public double countLoss(){
         Layer last = net.getLayers().get(net.getLayers().size()-1);
         double sum = 0;
         if(last instanceof OutputLayer){
@@ -50,6 +39,17 @@ public class BackpropagationModule {
         }
         return sum;
     }
+
+    public void backPropagate(double[] expected){
+        this.expected = expected;
+        System.out.println("Loss = " + countLoss());
+        //System.out.println("Weight map size = " + net.getWeightMap().size());
+        for(Map.Entry<Integer, ConvolutionWeight> entry : net.getWeightMap().entrySet()){
+            ConvolutionWeight weight = entry.getValue();
+            double delta = -1*differentiateConvolutionWeight(entry.getValue())*net.getSettings().getGradientRate();
+            weight.setValue(weight.getValue() + delta);
+        }
+    }
     private double differentiateConvolutionWeight(ConvolutionWeight weight){
         double chain = 0;
         Kernel kernel = weight.getNeuron().getKernelBox().getZMatrix(weight.getPos().getZ());
@@ -64,52 +64,18 @@ public class BackpropagationModule {
         }
         return chain;
     }
-    private double getConvolutionChain(ConvolutionWeight weight){
-        if(weight.isChainSet())
-            return weight.getChain();
+    private double getConvolutionChain(ConvolutionNeuron neuron){
         double chain = 1;
-        ConvolutionNeuron neuron = weight.getNeuron();
-        if(net.getLayers().get(neuron.getLayer().getIndexInNet()+1) instanceof FlatteningLayer){
-            double tmp = 0;
-            FlatteningLayer nextLayer = (FlatteningLayer)net.getLayers().get(neuron.getLayer().getIndexInNet()+1);
-            if(nextLayer.getIndexInNet() + 1 == net.getLayers().size()) {
-                for (int i = 0; i < nextLayer.getOutput().length; i++) {
-                    tmp += 2 * (nextLayer.getOutput()[i] - expected[i]);
-                }
-                chain *= tmp;
-            }//todo consider the first ever layer
-            else {
-                //proceeding to FFLayers
-            }
-        }else{
-            Utils.Matrix2D zMatrix = weight.getNeuron().getBeforeActivation();
-            double [] vectorZ = zMatrix.getAsVector();
-            double tmp1 = 0;
-            ConvolutionalLayer nextLayer = (ConvolutionalLayer) net.getLayers().get(weight.getNeuron().getLayer().getIndexInNet()+1);
-            for(int i = 0; i < vectorZ.length; i ++){
-                double z = vectorZ[i];
-                tmp1 = weight.getNeuron().getLayer().getActivation().differentiateWRTx(z);
-                if(tmp1 == 0)
-                    break;
-                for(Map.Entry<Integer, ConvolutionNeuron> neuronEntry : nextLayer.getNeurons().entrySet()){
-                    //iterating neurons
-                    double tmp2 = 0;
-                    ConvolutionNeuron weightsBox = neuronEntry.getValue();
-                    for(int j = 0; j < weightsBox.getKernelBox().getSize().getZ(); j++){
-                        //iterating neurons layers
-                        ConvolutionWeight [] weightsVector = weightsBox.getKernelBox().getZMatrix(j).getAsVector();
-                        for(int k = 0; k < weightsVector.length; k ++){
-                            ConvolutionWeight convolutionWeight = weightsVector[k];
-                            tmp2 += convolutionWeight.getValue()*getConvolutionChain(convolutionWeight);
-                        }
-                    }
-                    tmp1 *= tmp2;
-                }
-            }
-            chain *= tmp1;
+        double[] zVector = neuron.getBeforeActivation().getAsVector();
+        double tmp1 = 0;
+        for(int i = 0; i < zVector.length; i++){
+            double z = zVector[i];
+            double tmp2 = 0;
+            //get corresponding aL-1 to z set
+            neuron.getLayer().getActivation().differentiateWRTx(z);
+            tmp1*=tmp2;
         }
-        weight.setChain(chain);
-      //  System.out.println("Current chain = " + chain);
-        return chain;
+        chain *= tmp1;
+        return 1;
     }
 }
