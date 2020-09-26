@@ -32,7 +32,7 @@ public class ConvolutionNeuron extends Neuron {
                 for (int x = 0; x < size.getX(); x++) {
                     double randomValue  = Utils.randomDouble(0,1);
                     Utils.Vector3Num<Integer> pos = new Utils.Vector3Num<>(x, y, z);
-                    ConvolutionWeight weight = new ConvolutionWeight(this, pos,randomValue);
+                    ConvolutionWeight weight = new ConvolutionWeight(this, pos, randomValue);
                     kernelBox.setWeight(pos, weight);
                     getLayer().getNet().addWeight(weight);
                 }
@@ -54,7 +54,6 @@ public class ConvolutionNeuron extends Neuron {
 
     @Override
     public void run() {
-
         if(getLayer().getIndexInNet() != 0) {
             Layer prev = getLayer().getNet().getLayers().get(getLayer().getIndexInNet() - 1);
             if (prev instanceof ConvolutionNetLayer) {
@@ -76,7 +75,10 @@ public class ConvolutionNeuron extends Neuron {
                 output = new Utils.Matrix2D(beforeActivation.getSize());
                 for(int y = 0; y < finalResult.getSize().getY(); y++){
                     for(int x = 0; x < finalResult.getSize().getX(); x++){
-                        double afterChangesValue = finalResult.get(new Utils.Vector2Num<>(x,y))/maxValue;
+                        double afterChangesValue = finalResult.get(new Utils.Vector2Num<>(x,y));
+                        if(maxValue != 0){
+                            afterChangesValue /= maxValue;
+                        }
                         afterChangesValue = getLayer().getActivation().count(afterChangesValue + getBias());
                         output.set(new Utils.Vector2Num<>(x,y),afterChangesValue);
                     }

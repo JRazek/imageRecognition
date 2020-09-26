@@ -19,6 +19,7 @@ import static java.lang.Double.*;
 public class BackpropagationModule {
     private Net net;
     double[] expected;
+
     public BackpropagationModule(Net net){
         this.net = net;
     }
@@ -35,7 +36,8 @@ public class BackpropagationModule {
                 + expected.length + " != " + flatteningLayer.getOutput().length);
             }
             for(int i = 0; i < expected.length; i ++){
-                sum += Math.pow(flatteningLayer.getOutput()[i] - expected[i], 2);
+                double curr = Math.pow(flatteningLayer.getOutput()[i] - expected[i], 2);
+                sum += curr;
             }
         }
         return sum;
@@ -43,18 +45,13 @@ public class BackpropagationModule {
 
     public void backPropagate(double[] expected){
         this.expected = expected;
-        System.out.println("Loss = " + countLoss());
         //System.out.println("Weight map size = " + net.getWeightMap().size());
         for(Map.Entry<Integer, ConvolutionWeight> entry : net.getWeightMap().entrySet()){
             ConvolutionWeight weight = entry.getValue();
             double delta = -1*differentiateConvolutionWeight(entry.getValue())*net.getSettings().getGradientRate();
             double old = weight.getValue();
             weight.setValue(weight.getValue() + delta);
-            //System.out.println(weight.getValue() + delta);
-            if(old != weight.getValue() && !Double.isNaN(old) && old != 0){
-               // System.out.println("Different");
-                //System.out.println("old = " + old + " new = " + weight.getValue());
-            }
+           // System.out.println(weight.getValue() + delta);
         }
     }
     private double differentiateConvolutionWeight(ConvolutionWeight weight){
@@ -67,14 +64,18 @@ public class BackpropagationModule {
                 Vector2Num<Integer> v = new Vector2Num<>(x + weight.getPos().getX(), y + weight.getPos().getY());
                 tmp = a_Lm1.get(v);
                 tmp *= neuron.getLayer().getActivation().differentiateWRTx(weight.getValue());
-                //tmp *= getConvolutionChain(neuron);
+                tmp *= (1d/a_Lm1.getMaxValue());
+                tmp *= getConvolutionChain(neuron);
                 chain+= tmp;
+                //chain gets infinity!
             }
         }
         return chain;
     }
     private double getConvolutionChain(ConvolutionNeuron neuron){
         double chain = 1;
+        if(neuron.isChainSet())
+            return neuron.getCurrentChain();
         Layer nextLayerUnspecified = net.getLayers().get(neuron.getLayer().getIndexInNet()+1);
         if(nextLayerUnspecified instanceof ConvolutionalLayer){
 
@@ -112,12 +113,15 @@ public class BackpropagationModule {
                                             *
                                                 nextLayerNeuron.getLayer().getActivation().differentiateWRTx(zLp1.getValue(new Vector3Num<>(x,y,z)))
                                             *
+                                                (1d/nextLayerNeuron.getOutput().getMaxValue())
+                                            *
                                                 getConvolutionChain(nextLayerNeuron);
                                 }
                             }
-                            chain *= tmp1;
+                            //
                         }
                     }
+                    chain *= tmp1;
                 }
             }
         }else if(nextLayerUnspecified instanceof FlatteningLayer){
@@ -129,8 +133,6 @@ public class BackpropagationModule {
             }
         }
         neuron.setCurrentChain(chain);
-        if(chain == 0d || isNaN(chain) || isInfinite(chain) || isInfinite(-chain))
-            System.out.println("FUUUUUUUUCK = " + chain);
         return chain;
     }
 }

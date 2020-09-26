@@ -50,7 +50,7 @@ public class Net {
                 System.out.println("Pooling Layer");
             }
             if(entry.getValue() instanceof FlatteningLayer){
-                System.out.println("Flattening Layer");
+               // System.out.println("Flattening Layer");
             }
             i++;
         }
@@ -89,7 +89,8 @@ public class Net {
                 layer.resetNeuronsChains();
                 layer.reset();
             }
-
+            if(entry.getValue() instanceof FlatteningLayer)
+                ((FlatteningLayer) entry.getValue()).reset();
         }
     }
 

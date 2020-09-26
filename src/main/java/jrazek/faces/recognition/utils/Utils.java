@@ -123,7 +123,7 @@ public class Utils {
     }
     public static class Matrix2D extends Matrix2<Double> {
         double [] vector;
-        double maxValue;
+        double maxValue = 1;
         public Matrix2D(Vector2Num<Integer> size){
             super(createArray(size));
             vector = new double[size.getX()*size.getY()];

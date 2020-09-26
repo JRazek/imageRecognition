@@ -4,8 +4,6 @@ import jrazek.faces.recognition.structure.Layer;
 import jrazek.faces.recognition.structure.Net;
 import jrazek.faces.recognition.structure.activations.Activation;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
