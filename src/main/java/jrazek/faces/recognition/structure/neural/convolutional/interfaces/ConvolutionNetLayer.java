@@ -26,19 +26,21 @@ public interface ConvolutionNetLayer {
         for(int y = 0; y < matrix.getSize().getY()-kernel.getSize().getY(); y+= stride){
             for(int x = 0; x < matrix.getSize().getX()-kernel.getSize().getX(); x+= stride){
                 double sum = 0;
+                int correspondingX = x/stride;
+                int correspondingY = y/stride;
+                Utils.Vector2Num<Integer> zL = new Utils.Vector2Num<>(correspondingX,correspondingY);
                 for(int j = 0; j < kernel.getSize().getY(); j ++){
                     for(int i = 0; i < kernel.getSize().getX(); i ++){
-                        double aLm1 = matrix.get(new Utils.Vector2Num<>(x + i, y +j));
-                        double weight = kernel.get(new Utils.Vector2Num<>(j, i)).getValue();
-                        sum += aLm1 * weight;
+                        Utils.Vector2Num<Integer> aLm1 = new Utils.Vector2Num<>(x + i, y +j);
+                        ConvolutionWeight weight = kernel.get(new Utils.Vector2Num<>(j, i));
+                        sum += matrix.get(aLm1) * weight.getValue();
+                        kernel.getKernelBox().getNeuron().addDependence(new Utils.Vector3Num<>(x + i, y +j, kernel.getzPos()), weight, new Utils.Vector3Num<>(zL.getX(), zL.getY(), kernel.getzPos()));
                     }
                 }
                 if(sum > maxValue)
                     maxValue = sum;
-                int correspondingX = x/stride;
-                int correspondingY = y/stride;
                 result.setMaxValue(maxValue);
-                result.set(new Utils.Vector2Num<>(correspondingX,correspondingY), sum);
+                result.set(zL, sum);
             }
         }
         return result;

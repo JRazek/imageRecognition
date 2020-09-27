@@ -1,19 +1,26 @@
 package jrazek.faces.recognition.structure.neural.convolutional.kernels;
 
+import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionNeuron;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight;
 import jrazek.faces.recognition.utils.Utils;
 
 public class KernelBox{
     private Utils.Vector3Num<Integer> size;
     Kernel[] kernels;
-
-    public KernelBox(Utils.Vector3Num<Integer> size){
+    ConvolutionNeuron neuron;
+    public KernelBox(ConvolutionNeuron neuron, Utils.Vector3Num<Integer> size){
         this.size = size;
+        this.neuron = neuron;
         kernels = new Kernel[size.getZ()];
         for(int i = 0; i < size.getZ(); i ++){
-            kernels[i] = new Kernel(new Utils.Vector2Num<>(size.getX(), size.getY()));
+            kernels[i] = new Kernel(this, new Utils.Vector2Num<>(size.getX(), size.getY()), i);
         }
     }
+
+    public ConvolutionNeuron getNeuron() {
+        return neuron;
+    }
+
     public void setZMatrix(int z, Kernel m){
         if(m.getSize().getX().equals(this.size.getX())&&m.getSize().getY().equals(this.size.getY()))
             kernels[z] = m;

@@ -27,11 +27,12 @@ public class ConvolutionNeuron extends Neuron {
 
     public void addDependence(Utils.Vector3Num<Integer> aLm1, ConvolutionWeight w,  Utils.Vector3Num<Integer> zL){
         if(dependencies.get(aLm1) == null){
-            Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>> weights = new HashMap<>();
-            dependencies.put(aLm1, weights);
-        }else {
-        // inserting
+            dependencies.put(aLm1, new HashMap<>());
         }
+        if(dependencies.get(aLm1).get(w) == null){
+            dependencies.get(aLm1).put(w, new LinkedList<>());
+        }
+        dependencies.get(aLm1).get(w).add(zL);
     }
 
     public ConvolutionNeuron(NeuralLayer<?extends Neuron> l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
@@ -39,7 +40,7 @@ public class ConvolutionNeuron extends Neuron {
         if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY()/* || !size.getX().equals(size.getY())*/)
             throw new RuntimeErrorException(new Error("the Kernel size must be odd number!"));
         this.size = size;
-        kernelBox = new KernelBox(size);
+        kernelBox = new KernelBox(this, size);
     }
 
     void initRandomWeights() {

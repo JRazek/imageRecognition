@@ -57,22 +57,21 @@ public class BackpropagationModule {
     private double differentiateConvolutionWeight(ConvolutionWeight weight){
         double chain = 0;
         ConvolutionNeuron neuron = weight.getNeuron();
+        int stride = net.getSettings().getConvolutionStride();
         Matrix2D a_Lm1 = ((ConvolutionNetLayer)net.getLayers().get(neuron.getLayer().getIndexInNet()-1)).getOutputBox().getZMatrix(weight.getPos().getZ());
-        for(int y = 0; y < a_Lm1.getSize().getY()-weight.getNeuron().getKernelBox().getSize().getY(); y+= net.getSettings().getConvolutionStride()){
-            for(int x = 0; x < a_Lm1.getSize().getX()-weight.getNeuron().getKernelBox().getSize().getX(); x+= net.getSettings().getConvolutionStride()){
-                double tmp = 1;
-                Vector2Num<Integer> v = new Vector2Num<>(x + weight.getPos().getX(), y + weight.getPos().getY());
-                tmp = a_Lm1.get(v);
-                tmp *= neuron.getLayer().getActivation().differentiateWRTx(weight.getValue());
-                tmp *= (1d/a_Lm1.getMaxValue());
-                tmp *= getConvolutionChain(neuron);
-                chain+= tmp;
-                //chain gets infinity!
+        Matrix2D z_L = weight.getNeuron().getBeforeActivation();
+        for(int y = 0; y < a_Lm1.getSize().getY()-weight.getNeuron().getKernelBox().getSize().getY(); y+= stride){
+            for(int x = 0; x < a_Lm1.getSize().getX()-weight.getNeuron().getKernelBox().getSize().getX(); x+= stride){
+                int correspondingX = x/stride;//x in zL
+                int correspondingY = y/stride;//y in zL
+                Vector2Num<Integer> aLm1v = new Vector2Num<>(x + weight.getPos().getX(),y + weight.getPos().getY());
+                Vector2Num<Integer> zLv = new Vector2Num<>(correspondingX, correspondingY);
+               // chain += a_Lm1.get(aLm1v)*weight.getNeuron().getLayer().getActivation().differentiateWRTx(z_L.get(zLv))*getConvolutionChain();
             }
         }
         return chain;
     }
-    private double getConvolutionChain(ConvolutionNeuron neuron){
+    private double getConvolutionChain(ConvolutionNeuron neuron, Vector3Num<Integer> activation){
         double chain = 1;
         if(neuron.isChainSet())
             return neuron.getCurrentChain();
@@ -104,20 +103,6 @@ public class BackpropagationModule {
 
                             //int correspondingX = x*stride + toCenterX;
                             //int correspondingY = y*stride + toCenterY;
-
-                            for(int j = 0; j < kernelSize.getY(); j++) {
-                                for (int i = 0; i < kernelSize.getX(); i++) {
-                                    ConvolutionWeight correspondingWeight = kernel.get(new Vector2Num<>(i, j));
-                                    tmp1 +=
-                                                correspondingWeight.getValue()
-                                            *
-                                                nextLayerNeuron.getLayer().getActivation().differentiateWRTx(zLp1.getValue(new Vector3Num<>(x,y,z)))
-                                            *
-                                                (1d/nextLayerNeuron.getOutput().getMaxValue())
-                                            *
-                                                getConvolutionChain(nextLayerNeuron);
-                                }
-                            }
                             //
                         }
                     }

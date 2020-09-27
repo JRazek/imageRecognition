@@ -1,6 +1,7 @@
 package jrazek.faces.recognition.structure.neural.convolutional.kernels;
 
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight;
+import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionalLayer;
 import jrazek.faces.recognition.utils.Utils;
 import jrazek.faces.recognition.utils.abstracts.Matrix2;
 
@@ -9,9 +10,21 @@ import jrazek.faces.recognition.utils.abstracts.Matrix2;
  */
 public class Kernel extends Matrix2<ConvolutionWeight> {
     ConvolutionWeight[] vector;
-    Kernel(Utils.Vector2Num<Integer> size){
+    KernelBox kernelBox;
+    int zPos;
+    Kernel(KernelBox kernelBox, Utils.Vector2Num<Integer> size, int zPos){
         super(new ConvolutionWeight[size.getX()][size.getY()]);
+        this.kernelBox = kernelBox;
         this.vector = new ConvolutionWeight[size.getY()*size.getY()];
+        this.zPos = zPos;
+    }
+
+    public int getzPos() {
+        return zPos;
+    }
+
+    public KernelBox getKernelBox() {
+        return kernelBox;
     }
 
     @Override

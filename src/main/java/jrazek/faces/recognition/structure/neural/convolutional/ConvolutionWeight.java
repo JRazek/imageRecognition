@@ -8,6 +8,7 @@ import java.util.*;
 public class ConvolutionWeight extends Weight {
     private ConvolutionNeuron neuron;
     private Utils.Vector3Num<Integer> pos;
+
     double chain;
     boolean isChainSet = false;
     ConvolutionWeight(ConvolutionNeuron neuron, Utils.Vector3Num<Integer> pos, Double v){
