@@ -10,13 +10,29 @@ import jrazek.faces.recognition.structure.neural.convolutional.kernels.KernelBox
 import jrazek.faces.recognition.utils.Utils;
 
 import javax.management.RuntimeErrorException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ConvolutionNeuron extends Neuron {
     private final Utils.Vector3Num<Integer> size;
     private KernelBox kernelBox;
     private Utils.Matrix2D beforeActivation;//wartosc przed aktywacja, biasem oraz normalizacja
     private Utils.Matrix2D output;//z neuronu wychodzi jedynie jeden plaster i idzie do boxa warstwy
+    Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> dependencies = new HashMap<>();
+    /**
+     * map that holds the vector of activation in prev layer, weights that were convoluted with it and the values that are dependent on this weight and activation
+     */
 
+    public void addDependence(Utils.Vector3Num<Integer> aLm1, ConvolutionWeight w,  Utils.Vector3Num<Integer> zL){
+        if(dependencies.get(aLm1) == null){
+            Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>> weights = new HashMap<>();
+            dependencies.put(aLm1, weights);
+        }else {
+        // inserting
+        }
+    }
 
     public ConvolutionNeuron(NeuralLayer<?extends Neuron> l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
         super(l, indexInLayer);

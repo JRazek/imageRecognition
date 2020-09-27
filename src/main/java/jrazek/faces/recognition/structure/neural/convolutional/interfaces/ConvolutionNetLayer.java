@@ -28,7 +28,9 @@ public interface ConvolutionNetLayer {
                 double sum = 0;
                 for(int j = 0; j < kernel.getSize().getY(); j ++){
                     for(int i = 0; i < kernel.getSize().getX(); i ++){
-                        sum += matrix.get(new Utils.Vector2Num<>(x + i, y +j))*kernel.get(new Utils.Vector2Num<>(j, i)).getValue();
+                        double aLm1 = matrix.get(new Utils.Vector2Num<>(x + i, y +j));
+                        double weight = kernel.get(new Utils.Vector2Num<>(j, i)).getValue();
+                        sum += aLm1 * weight;
                     }
                 }
                 if(sum > maxValue)

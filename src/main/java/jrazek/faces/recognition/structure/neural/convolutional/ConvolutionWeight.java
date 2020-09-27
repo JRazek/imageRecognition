@@ -3,13 +3,31 @@ package jrazek.faces.recognition.structure.neural.convolutional;
 import jrazek.faces.recognition.structure.neural.Weight;
 import jrazek.faces.recognition.utils.Utils;
 
+import java.util.*;
+
 public class ConvolutionWeight extends Weight {
+    private ConvolutionNeuron neuron;
+    private Utils.Vector3Num<Integer> pos;
     double chain;
     boolean isChainSet = false;
     ConvolutionWeight(ConvolutionNeuron neuron, Utils.Vector3Num<Integer> pos, Double v){
         super(v);
         this.neuron = neuron;
         this.pos = pos;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(neuron, pos);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj.getClass().equals(this.getClass())){
+            ConvolutionWeight w = (ConvolutionWeight)obj;
+            return (w.getNeuron().equals(this.neuron) && w.getPos().equals(this.getPos()));
+        }
+        return false;
     }
 
     public void setChain(double chain) {
@@ -29,8 +47,6 @@ public class ConvolutionWeight extends Weight {
         isChainSet = false;
         chain = 0;
     }
-    private ConvolutionNeuron neuron;
-    private Utils.Vector3Num<Integer> pos;
     public ConvolutionNeuron getNeuron() {
         return neuron;
     }
