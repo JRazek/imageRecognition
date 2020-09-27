@@ -4,9 +4,7 @@ import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight
 import jrazek.faces.recognition.utils.abstracts.Matrix2;
 
 import javax.management.RuntimeErrorException;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Utils {
     public static class Vector2Num<T extends Number>{
@@ -25,6 +23,21 @@ public class Utils {
         }
         public void setY(T y) {
             this.y = y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.x, this.y, this.getClass());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj.getClass().equals(this.getClass())){
+                Vector2Num<? extends T> v = (Vector2Num<? extends T>)obj;
+                if(v.getX().equals(this.getX()) && v.getY().equals(this.getY()))
+                    return true;
+            }
+            return super.equals(obj);
         }
     }
 
@@ -50,6 +63,21 @@ public class Utils {
         }
         public void setZ(T z) {
             this.z = z;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.x, this.y, this.z, this.getClass());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj.getClass().equals(this.getClass())){
+                Vector3Num<? extends T> v = (Vector3Num<? extends T>)obj;
+                if(v.getX().equals(this.getX()) && v.getY().equals(this.getY()) && v.getZ().equals(this.getZ()))
+                    return true;
+            }
+            return super.equals(obj);
         }
     }
     public static double randomDouble(){
