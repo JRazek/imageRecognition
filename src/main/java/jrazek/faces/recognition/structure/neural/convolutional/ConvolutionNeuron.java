@@ -22,7 +22,7 @@ public class ConvolutionNeuron extends Neuron {
     private Utils.Matrix2D output;//z neuronu wychodzi jedynie jeden plaster i idzie do boxa warstwy
     Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> dependencies = new HashMap<>();
     /**
-     * map that holds the vector of activation in prev layer, weights that were convoluted with it and the values that are dependent on this weight and activation
+     * map that holds the vector of activation in prev layer, weights that were convoluted with it and the values that are dependent on this weight and activation.
      */
 
     public void addDependence(Utils.Vector3Num<Integer> aLm1, ConvolutionWeight w,  Utils.Vector3Num<Integer> zL){
