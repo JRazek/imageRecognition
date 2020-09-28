@@ -41,7 +41,7 @@ public interface ConvolutionNetLayer {
                         Utils.Vector3Num<Integer> activationLm1Vector = new Utils.Vector3Num<>(aLm1.getX(), aLm1.getY(), z);//prev neuron.
                         Utils.Vector3Num<Integer> zVectorL = new Utils.Vector3Num<>(zL.getX(), zL.getY(), kernel.getKernelBox().getNeuron().getIndexInLayer());
                         //fix - przechowujesz dependencies w neuronie zamiast warstwie. Pytajac neuron,
-                        // nie zawsze bedziesz mogl spytac.Tzn jezeli jest to np pierwsza warstwa albo pooling
+                        // nie zawsze bedziesz mogl spytac.Tzn jezeli jest to np pierwsza warstwa albo pooling.
                         .addDependence(activationLm1Vector, weight, zVectorL);
                     }
                 }
