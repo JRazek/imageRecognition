@@ -43,6 +43,7 @@ public interface ConvolutionNetLayer {
                         //fix - przechowujesz dependencies w neuronie zamiast warstwie. Pytajac neuron,
                         // nie zawsze bedziesz mogl spytac.Tzn jezeli jest to np pierwsza warstwa albo pooling.
                         .addDependence(activationLm1Vector, weight, zVectorL);
+                        //przechopwywanie na poziomie warstwy. Rozroznienie getchain dla rownych typow warstw
                     }
                 }
                 if(sum > maxValue)
