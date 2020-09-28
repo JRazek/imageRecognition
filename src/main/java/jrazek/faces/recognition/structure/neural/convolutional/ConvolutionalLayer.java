@@ -35,6 +35,11 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     }
 
     @Override
+    public Map<Integer, ConvolutionNeuron> getNeurons() {
+        return super.getNeurons();
+    }
+
+    @Override
     public void setRandom() {
         init();
         for(int i = 0; i < outputBox.getSize().getZ(); i ++){

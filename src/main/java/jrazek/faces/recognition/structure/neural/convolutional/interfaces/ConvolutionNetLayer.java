@@ -2,6 +2,7 @@ package jrazek.faces.recognition.structure.neural.convolutional.interfaces;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionNeuron;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight;
 import jrazek.faces.recognition.structure.neural.convolutional.kernels.Kernel;
+import jrazek.faces.recognition.structure.neural.convolutional.kernels.KernelBox;
 import jrazek.faces.recognition.utils.Utils;
 
 
@@ -16,7 +17,9 @@ public interface ConvolutionNetLayer {
     static int afterConvolutionSize(int matrixSize, int kernelSize, int padding, int stride){
         return  ((matrixSize - kernelSize + 2*padding)/stride)+1;
     }
-    static Utils.Matrix2D convolve(Utils.Matrix2D matrix, Kernel kernel, int padding, int stride){
+    static Utils.Matrix2D convolve(Utils.Matrix3D matrix3D, KernelBox kernelBox, int z, int padding, int stride){
+        Kernel kernel = kernelBox.getZMatrix(z);
+        Utils.Matrix2D matrix = matrix3D.getZMatrix(z);
         int afterConvolutionSizeX = afterConvolutionSize(matrix.getSize().getX(), kernel.getSize().getX(), padding, stride);
         int afterConvolutionSizeY = afterConvolutionSize(matrix.getSize().getY(), kernel.getSize().getY(), padding, stride);
         int toCenterX = kernel.getSize().getX()/2;
@@ -31,10 +34,15 @@ public interface ConvolutionNetLayer {
                 Utils.Vector2Num<Integer> zL = new Utils.Vector2Num<>(correspondingX,correspondingY);
                 for(int j = 0; j < kernel.getSize().getY(); j ++){
                     for(int i = 0; i < kernel.getSize().getX(); i ++){
-                        Utils.Vector2Num<Integer> aLm1 = new Utils.Vector2Num<>(x + i, y +j);
+                        Utils.Vector2Num<Integer> aLm1 = new Utils.Vector2Num<>(x + i, y + j);
                         ConvolutionWeight weight = kernel.get(new Utils.Vector2Num<>(j, i));
-                        sum += matrix.get(aLm1) * weight.getValue();
-                        kernel.getKernelBox().getNeuron().addDependence(new Utils.Vector3Num<>(x + i, y +j, kernel.getzPos()), weight, new Utils.Vector3Num<>(zL.getX(), zL.getY(), kernel.getzPos()));
+                        sum += matrix.get(aLm1) * weight.getValue();//for normalisation
+
+                        Utils.Vector3Num<Integer> activationLm1Vector = new Utils.Vector3Num<>(aLm1.getX(), aLm1.getY(), z);//prev neuron.
+                        Utils.Vector3Num<Integer> zVectorL = new Utils.Vector3Num<>(zL.getX(), zL.getY(), kernel.getKernelBox().getNeuron().getIndexInLayer());
+                        //fix - przechowujesz dependencies w neuronie zamiast warstwie. Pytajac neuron,
+                        // nie zawsze bedziesz mogl spytac.Tzn jezeli jest to np pierwsza warstwa albo pooling
+                        .addDependence(activationLm1Vector, weight, zVectorL);
                     }
                 }
                 if(sum > maxValue)

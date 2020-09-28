@@ -35,6 +35,10 @@ public class ConvolutionNeuron extends Neuron {
         dependencies.get(aLm1).get(w).add(zL);
     }
 
+    public Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> getDependencies() {
+        return dependencies;
+    }
+
     public ConvolutionNeuron(NeuralLayer<?extends Neuron> l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
         super(l, indexInLayer);
         if ((size.getX() / 2) * 2 == size.getX() || (size.getY() / 2) * 2 == size.getY()/* || !size.getX().equals(size.getY())*/)
@@ -82,7 +86,9 @@ public class ConvolutionNeuron extends Neuron {
                 for (int z = 0; z < givenTensor.getSize().getZ(); z++) {
                     //summing all layers
                     Utils.Matrix2D matrix2D = givenTensor.getZMatrix(z);
-                    Utils.Matrix2D convolvedMatrix = ConvolutionNetLayer.convolve(matrix2D, kernelBox.getZMatrix(z), padding, stride);
+                    Utils.Matrix2D convolvedMatrix = ConvolutionNetLayer.convolve(givenTensor, kernelBox, z, padding, stride);
+                    if(prev instanceof ConvolutionalLayer)
+                        System.out.println(((ConvolutionalLayer) prev).getNeurons().get(kernelBox.getNeuron().getIndexInLayer()) + " " + kernelBox.getNeuron());
                     if(z == 0)
                         finalResult = new Utils.Matrix2D(convolvedMatrix.getSize());
                     maxValue += convolvedMatrix.getMaxValue();

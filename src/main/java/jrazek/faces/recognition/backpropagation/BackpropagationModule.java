@@ -10,6 +10,7 @@ import jrazek.faces.recognition.structure.neural.convolutional.interfaces.Convol
 import jrazek.faces.recognition.structure.neural.convolutional.kernels.Kernel;
 import jrazek.faces.recognition.structure.neural.convolutional.kernels.KernelBox;
 import jrazek.faces.recognition.structure.neural.feedForward.further.OutputLayer;
+import jrazek.faces.recognition.utils.Utils;
 import jrazek.faces.recognition.utils.Utils.*;
 
 import java.util.*;
@@ -19,7 +20,7 @@ import static java.lang.Double.*;
 public class BackpropagationModule {
     private Net net;
     double[] expected;
-
+    int i = 0;//debug
     public BackpropagationModule(Net net){
         this.net = net;
     }
@@ -66,52 +67,40 @@ public class BackpropagationModule {
                 int correspondingY = y/stride;//y in zL
                 Vector2Num<Integer> aLm1v = new Vector2Num<>(x + weight.getPos().getX(),y + weight.getPos().getY());
                 Vector2Num<Integer> zLv = new Vector2Num<>(correspondingX, correspondingY);
-               // chain += a_Lm1.get(aLm1v)*weight.getNeuron().getLayer().getActivation().differentiateWRTx(z_L.get(zLv))*getConvolutionChain();
+                chain += a_Lm1.get(aLm1v)*weight.getNeuron().getLayer().getActivation().differentiateWRTx(z_L.get(zLv))*getConvolutionChain(neuron, new Vector3Num<>(zLv.getX(), zLv.getY(), weight.getNeuron().getIndexInLayer()));
             }
         }
         return chain;
     }
     private double getConvolutionChain(ConvolutionNeuron neuron, Vector3Num<Integer> activation){
+        System.out.println(neuron.getIndexInLayer());
         double chain = 1;
         if(neuron.isChainSet())
             return neuron.getCurrentChain();
-        Layer nextLayerUnspecified = net.getLayers().get(neuron.getLayer().getIndexInNet()+1);
-        if(nextLayerUnspecified instanceof ConvolutionalLayer){
-
-            Matrix2D aL = neuron.getOutput();
-
-            Matrix3D zLp1 = ((ConvolutionalLayer) nextLayerUnspecified).getBeforeActivationBox();
-
-            Vector2Num<Integer> kernelSize = neuron.getLayer().getNet().getSettings().getConvolutionKernelSize();
-            int stride = net.getSettings().getConvolutionStride();
-
-            for(Map.Entry<Integer, ConvolutionNeuron> entry : ((ConvolutionalLayer) nextLayerUnspecified).getNeurons().entrySet()){
-                ConvolutionNeuron nextLayerNeuron = entry.getValue();
-                if(nextLayerNeuron.isChainSet()){
-                    //return nextLayerNeuron.getCurrentChain();
+        Layer layer = neuron.getLayer();
+        if(layer instanceof ConvolutionalLayer){
+            Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> dependencies = neuron.getDependencies();
+            double tmp = 0;
+            for(Map.Entry<ConvolutionWeight, List<Utils.Vector3Num<Integer>>> entry : dependencies.get(activation).entrySet()){
+                ConvolutionWeight weight = entry.getKey();
+                if(weight.getNeuron().equals(neuron)){
+                    System.out.println("FUUUUUUUCK");
                 }
-                KernelBox kernelBox = nextLayerNeuron.getKernelBox();
-                double tmp1 = 0;
-                for(int z = 0; z < kernelBox.getSize().getZ(); z ++){
-                    //warstwy kernela w jednym neuronie
-                    Kernel kernel = kernelBox.getZMatrix(z);
-                    for (int y = 0; y < zLp1.getSize().getY(); y++){
-                        for (int x = 0; x < zLp1.getSize().getX(); x++){
-                            //iteracja po z w nastepnej warstwie.
-                            int toCenterX = kernelSize.getX()/2;
-                            int toCenterY = kernelSize.getY()/2;
+                List<Utils.Vector3Num<Integer>> impactsZ = entry.getValue();
+                for(Vector3Num<Integer> impactZ : impactsZ){
+                    Vector3Num<Integer> nextActivationVector = impactZ;//same place as the z
+                    double z = weight.getNeuron().getBeforeActivation().get(new Vector2Num<>(impactZ.getX(), impactZ.getY()));
 
-                            //int correspondingX = x*stride + toCenterX;
-                            //int correspondingY = y*stride + toCenterY;
-                            //
-                        }
-                    }
-                    chain *= tmp1;
+                    i++;
+                    //consider the normalisation in here about calculations!
+                    tmp += weight.getValue()*weight.getNeuron().getLayer().getActivation().differentiateWRTx(z)*getConvolutionChain(weight.getNeuron(), nextActivationVector);
                 }
+                //dependencies.remove(entry.getKey());
             }
-        }else if(nextLayerUnspecified instanceof FlatteningLayer){
+            chain *=tmp;
+        }else if(layer instanceof FlatteningLayer){
             //do flatted and error calculus
-            double[] output = ((FlatteningLayer) nextLayerUnspecified).getOutput();
+            double[] output = ((FlatteningLayer) layer).getOutput();
             if(output.length == this.expected.length){
                 for(int i = 0; i < output.length; i ++)
                     chain += 2*(output[i] - expected[i]);
