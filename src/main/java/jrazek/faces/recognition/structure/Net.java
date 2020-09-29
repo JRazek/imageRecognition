@@ -19,7 +19,7 @@ import java.util.TreeMap;
 public class Net {
     private Map<Integer, Layer> layers = new TreeMap<>();
     private Map<Integer, ConvolutionWeight> weightMap = new HashMap<>();
-    private NetSettings settings;
+    private NetSettings settings;//
     public Net(NetSettings netSettings){
         this.settings = netSettings;
     }
