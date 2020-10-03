@@ -63,7 +63,7 @@ public class BackpropagationModule {
         Matrix2D z_L = weight.getNeuron().getBeforeActivation();
         for(int y = 0; y < a_Lm1.getSize().getY()-weight.getNeuron().getKernelBox().getSize().getY(); y+= stride){
             for(int x = 0; x < a_Lm1.getSize().getX()-weight.getNeuron().getKernelBox().getSize().getX(); x+= stride){
-                int correspondingX = x/stride;//x in zL
+                int correspondingX = x/stride;//x in zL.
                 int correspondingY = y/stride;//y in zL.
                 Vector2Num<Integer> aLm1v = new Vector2Num<>(x + weight.getPos().getX(),y + weight.getPos().getY());
                 Vector2Num<Integer> zLv = new Vector2Num<>(correspondingX, correspondingY);
