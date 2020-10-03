@@ -52,7 +52,7 @@ public class BackpropagationModule {
             double delta = -1*differentiateConvolutionWeight(entry.getValue())*net.getSettings().getGradientRate();
             double old = weight.getValue();
             weight.setValue(weight.getValue() + delta);
-           // System.out.println(weight.getValue() + delta);
+           // System.out.println(weight.getValue() + delta);.
         }
     }
     private double differentiateConvolutionWeight(ConvolutionWeight weight){
