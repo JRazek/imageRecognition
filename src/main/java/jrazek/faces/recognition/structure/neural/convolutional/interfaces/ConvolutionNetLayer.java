@@ -1,6 +1,7 @@
 package jrazek.faces.recognition.structure.neural.convolutional.interfaces;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionNeuron;
 import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionWeight;
+import jrazek.faces.recognition.structure.neural.convolutional.ConvolutionalLayer;
 import jrazek.faces.recognition.structure.neural.convolutional.kernels.Kernel;
 import jrazek.faces.recognition.structure.neural.convolutional.kernels.KernelBox;
 import jrazek.faces.recognition.utils.Utils;
@@ -42,7 +43,8 @@ public interface ConvolutionNetLayer {
                         Utils.Vector3Num<Integer> zVectorL = new Utils.Vector3Num<>(zL.getX(), zL.getY(), kernel.getKernelBox().getNeuron().getIndexInLayer());
                         //fix - przechowujesz dependencies w neuronie zamiast warstwie. Pytajac neuron,
                         // nie zawsze bedziesz mogl spytac.Tzn jezeli jest to np pierwsza warstwa albo pooling.
-                        .addDependence(activationLm1Vector, weight, zVectorL);
+                        if(kernelBox.getNeuron().getLayer() instanceof ConvolutionalLayer)
+                            ((ConvolutionalLayer)kernelBox.getNeuron().getLayer()).addDependence(activationLm1Vector, weight, zVectorL);
                         //przechopwywanie na poziomie warstwy. Rozroznienie getchain dla rownych typow warstw
                     }
                 }

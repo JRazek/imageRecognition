@@ -7,6 +7,9 @@ import jrazek.faces.recognition.structure.neural.convolutional.interfaces.Convol
 import jrazek.faces.recognition.utils.Utils;
 import static jrazek.faces.recognition.structure.neural.convolutional.interfaces.ConvolutionNetLayer.afterConvolutionSize;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implements ConvolutionNetLayer {
@@ -15,6 +18,24 @@ public class ConvolutionalLayer extends NeuralLayer<ConvolutionNeuron> implement
     private Utils.Matrix3D outputBox = null;
     private Utils.Matrix3D beforeActivationBox = null;
     private int filledOutputBoxCount;
+    Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> dependencies = new HashMap<>();
+    /**
+     * map that holds the vector of activation in prev layer, weights that were convoluted with it and the values that are dependent on this weight and activation.
+     */
+
+    public void addDependence(Utils.Vector3Num<Integer> aLm1, ConvolutionWeight w,  Utils.Vector3Num<Integer> zL){
+        if(dependencies.get(aLm1) == null){
+            dependencies.put(aLm1, new HashMap<>());
+        }
+        if(dependencies.get(aLm1).get(w) == null){
+            dependencies.get(aLm1).put(w, new LinkedList<>());
+        }
+        dependencies.get(aLm1).get(w).add(zL);
+    }
+
+    public Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> getDependencies() {
+        return dependencies;
+    }
 
     public ConvolutionalLayer(Net net, Activation a, int index) {
         super(net, a, index);

@@ -46,13 +46,20 @@ public class BackpropagationModule {
 
     public void backPropagate(double[] expected){
         this.expected = expected;
+        if(net.getLayers().get(net.getLayers().size()-1) instanceof FlatteningLayer){
+            if(expected.length != ((FlatteningLayer) net.getLayers().get(net.getLayers().size()-1)).getOutput().length)
+                throw new Error("THE EXPECTED AND OUTPUT IS NOT THE SAME SIZE!!!"
+                        + expected.length + " != " + ((FlatteningLayer) net.getLayers().get(net.getLayers().size()-1)).getOutput().length);
+        }else {
+            throw new Error("THE LAST LAYER IS NOT A FLATTENING LAYER!!!");
+        }
         //System.out.println("Weight map size = " + net.getWeightMap().size());
         for(Map.Entry<Integer, ConvolutionWeight> entry : net.getWeightMap().entrySet()){
             ConvolutionWeight weight = entry.getValue();
-            double delta = -1*differentiateConvolutionWeight(entry.getValue())*net.getSettings().getGradientRate();
+            double delta = 1*differentiateConvolutionWeight(entry.getValue())*net.getSettings().getGradientRate();
             double old = weight.getValue();
             weight.setValue(weight.getValue() + delta);
-           // System.out.println(weight.getValue() + delta);.
+            System.out.println(delta);
         }
     }
     private double differentiateConvolutionWeight(ConvolutionWeight weight){
@@ -67,32 +74,54 @@ public class BackpropagationModule {
                 int correspondingY = y/stride;//y in zL.
                 Vector2Num<Integer> aLm1v = new Vector2Num<>(x + weight.getPos().getX(),y + weight.getPos().getY());
                 Vector2Num<Integer> zLv = new Vector2Num<>(correspondingX, correspondingY);
-                chain += a_Lm1.get(aLm1v)*weight.getNeuron().getLayer().getActivation().differentiateWRTx(z_L.get(zLv))*getConvolutionChain();
+                chain += a_Lm1.get(aLm1v)*weight.getNeuron().getLayer().getActivation().differentiateWRTx(z_L.get(zLv))*getConvolutionChain((ConvolutionalLayer)neuron.getLayer(), neuron.getIndexInLayer(), new Vector3Num<>(zLv.getX(), zLv.getY(), weight.getPos().getZ()));
             }
         }
         return chain;
     }
-    private double getConvolutionChain(ConvolutionNetLayer layer, int zActivation, Vector3Num<Integer> activation){
+    private double getConvolutionChain(ConvolutionNetLayer layer, int indexInLayer, Vector3Num<Integer> activation){
         double chain = 1;
-        //the layer of activation. that means we consider the next layer and split into different options.
-        if(layer instanceof ConvolutionalLayer){
-            ConvolutionNeuron  neuron = ((ConvolutionalLayer) layer).getNeurons().get(zActivation);
-            System.out.println(neuron.getIndexInLayer());
+        if(layer instanceof ConvolutionalLayer){//safety check just
+            ConvolutionNeuron neuron = ((ConvolutionalLayer) layer).getNeurons().get(indexInLayer);
+           // System.out.println(neuron.getIndexInLayer());
             if(neuron.isChainSet())
                 return neuron.getCurrentChain();
-            Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> dependencies = neuron.getDependencies();
+            Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> dependencies = ((ConvolutionalLayer) layer).getDependencies();
+
+            /**
+             * map that holds the vector of activation in prev layer, weights that were convoluted with it and the values that are dependent on this weight and activation.
+             */
             double tmp = 0;
             for(Map.Entry<ConvolutionWeight, List<Utils.Vector3Num<Integer>>> entry : dependencies.get(activation).entrySet()){
-
+                //check
+                ConvolutionWeight weight = entry.getKey();
+                List<Vector3Num<Integer>> netValuesInNextLayer = entry.getValue();
+                //if next layer is convolutional
+                Layer next = net.getLayers().get(((ConvolutionalLayer) layer).getIndexInNet()+1);
+                for(Vector3Num<Integer> netValue : netValuesInNextLayer){
+                    if(next instanceof ConvolutionalLayer) {
+                        tmp += weight.getValue() *
+                                ((ConvolutionalLayer) next).getActivation().differentiateWRTx(((ConvolutionalLayer) layer).getBeforeActivationBox().getValue(netValue)) *
+                                getConvolutionChain((ConvolutionalLayer) next, netValue.getZ(), netValue);
+                    }
+                    //if next layer is flattening
+                    if(next instanceof FlatteningLayer){
+                        countFinalChain((FlatteningLayer)next);
+                    }
+                }
             }
             chain *=tmp;
-        }else if(layer instanceof FlatteningLayer){
-            //do flatted and error calculus
-            double[] output = ((FlatteningLayer) layer).getOutput();
-            if(output.length == this.expected.length){
-                for(int i = 0; i < output.length; i ++)
-                    chain += 2*(output[i] - expected[i]);
-            }
+            neuron.setCurrentChain(chain);
+        }
+        return chain;
+    }
+    private double countFinalChain(FlatteningLayer layer){
+        //do flatted and error calculus
+        double chain = 0;
+        double[] output = layer.getOutput();
+        if(output.length == this.expected.length){
+            for(int i = 0; i < output.length; i ++)
+                chain += 2*(output[i] - expected[i]);
         }
         return chain;
     }

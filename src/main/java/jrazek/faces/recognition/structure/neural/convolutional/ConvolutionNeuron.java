@@ -20,24 +20,8 @@ public class ConvolutionNeuron extends Neuron {
     private KernelBox kernelBox;
     private Utils.Matrix2D beforeActivation;//wartosc przed aktywacja, biasem oraz normalizacja
     private Utils.Matrix2D output;//z neuronu wychodzi jedynie jeden plaster i idzie do boxa warstwy
-    Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> dependencies = new HashMap<>();
-    /**
-     * map that holds the vector of activation in prev layer, weights that were convoluted with it and the values that are dependent on this weight and activation.
-     */
+    private double maxValue;
 
-    public void addDependence(Utils.Vector3Num<Integer> aLm1, ConvolutionWeight w,  Utils.Vector3Num<Integer> zL){
-        if(dependencies.get(aLm1) == null){
-            dependencies.put(aLm1, new HashMap<>());
-        }
-        if(dependencies.get(aLm1).get(w) == null){
-            dependencies.get(aLm1).put(w, new LinkedList<>());
-        }
-        dependencies.get(aLm1).get(w).add(zL);
-    }
-
-    public Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> getDependencies() {
-        return dependencies;
-    }
 
     public ConvolutionNeuron(NeuralLayer<?extends Neuron> l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
         super(l, indexInLayer);
@@ -82,13 +66,13 @@ public class ConvolutionNeuron extends Neuron {
                 Utils.Matrix2D finalResult = null;
                 int padding = getLayer().getNet().getSettings().getConvolutionPadding();
                 int stride = getLayer().getNet().getSettings().getConvolutionStride();
-                double maxValue = 0;
+                maxValue = 0;
                 for (int z = 0; z < givenTensor.getSize().getZ(); z++) {
                     //summing all layers
                     Utils.Matrix2D matrix2D = givenTensor.getZMatrix(z);
                     Utils.Matrix2D convolvedMatrix = ConvolutionNetLayer.convolve(givenTensor, kernelBox, z, padding, stride);
-                    if(prev instanceof ConvolutionalLayer)
-                        System.out.println(((ConvolutionalLayer) prev).getNeurons().get(kernelBox.getNeuron().getIndexInLayer()) + " " + kernelBox.getNeuron());
+                    //if(prev instanceof ConvolutionalLayer)
+                        //System.out.println(((ConvolutionalLayer) prev).getNeurons().get(kernelBox.getNeuron().getIndexInLayer()) + " " + kernelBox.getNeuron());
                     if(z == 0)
                         finalResult = new Utils.Matrix2D(convolvedMatrix.getSize());
                     maxValue += convolvedMatrix.getMaxValue();
@@ -100,7 +84,7 @@ public class ConvolutionNeuron extends Neuron {
                     for(int x = 0; x < finalResult.getSize().getX(); x++){
                         double afterChangesValue = finalResult.get(new Utils.Vector2Num<>(x,y));
                         if(maxValue != 0){
-                            afterChangesValue /= maxValue;
+                            //afterChangesValue /= maxValue;
                         }
                         afterChangesValue = getLayer().getActivation().count(afterChangesValue + getBias());
                         output.set(new Utils.Vector2Num<>(x,y),afterChangesValue);
@@ -121,6 +105,9 @@ public class ConvolutionNeuron extends Neuron {
         return kernelBox;
     }
 
+    public double getMaxValue() {
+        return maxValue;
+    }
     public Utils.Matrix2D getBeforeActivation() {
         return beforeActivation;
     }
