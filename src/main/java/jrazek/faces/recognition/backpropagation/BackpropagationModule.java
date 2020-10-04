@@ -58,8 +58,8 @@ public class BackpropagationModule {
             ConvolutionWeight weight = entry.getValue();
             double delta = 1*differentiateConvolutionWeight(entry.getValue())*net.getSettings().getGradientRate();
             double old = weight.getValue();
-            weight.setValue(weight.getValue() + delta);
-            System.out.println(delta);
+            weight.setValue(weight.getValue() - delta);
+            System.out.println("Delta = " + delta);
         }
     }
     private double differentiateConvolutionWeight(ConvolutionWeight weight){
@@ -70,11 +70,17 @@ public class BackpropagationModule {
         Matrix2D z_L = weight.getNeuron().getBeforeActivation();
         for(int y = 0; y < a_Lm1.getSize().getY()-weight.getNeuron().getKernelBox().getSize().getY(); y+= stride){
             for(int x = 0; x < a_Lm1.getSize().getX()-weight.getNeuron().getKernelBox().getSize().getX(); x+= stride){
+                double buffer = 1;
                 int correspondingX = x/stride;//x in zL.
                 int correspondingY = y/stride;//y in zL.
                 Vector2Num<Integer> aLm1v = new Vector2Num<>(x + weight.getPos().getX(),y + weight.getPos().getY());
                 Vector2Num<Integer> zLv = new Vector2Num<>(correspondingX, correspondingY);
-                chain += a_Lm1.get(aLm1v)*weight.getNeuron().getLayer().getActivation().differentiateWRTx(z_L.get(zLv))*getConvolutionChain((ConvolutionalLayer)neuron.getLayer(), neuron.getIndexInLayer(), new Vector3Num<>(zLv.getX(), zLv.getY(), weight.getPos().getZ()));
+                buffer *= a_Lm1.get(aLm1v);
+                buffer *= weight.getNeuron().getLayer().getActivation().differentiateWRTx(z_L.get(zLv));
+                buffer *= getConvolutionChain((ConvolutionalLayer)neuron.getLayer(), neuron.getIndexInLayer(), new Vector3Num<>(zLv.getX(), zLv.getY(), weight.getPos().getZ()));
+                if(weight.getNeuron().getMaxValue() != 0)
+                    buffer /= weight.getNeuron().getMaxValue();
+                chain += buffer;
             }
         }
         return chain;
@@ -87,7 +93,6 @@ public class BackpropagationModule {
             if(neuron.isChainSet())
                 return neuron.getCurrentChain();
             Map<Utils.Vector3Num<Integer>, Map<ConvolutionWeight, List<Utils.Vector3Num<Integer>>>> dependencies = ((ConvolutionalLayer) layer).getDependencies();
-
             /**
              * map that holds the vector of activation in prev layer, weights that were convoluted with it and the values that are dependent on this weight and activation.
              */
@@ -99,18 +104,22 @@ public class BackpropagationModule {
                 //if next layer is convolutional
                 Layer next = net.getLayers().get(((ConvolutionalLayer) layer).getIndexInNet()+1);
                 for(Vector3Num<Integer> netValue : netValuesInNextLayer){
+                    double buffer = 1;
                     if(next instanceof ConvolutionalLayer) {
-                        tmp += weight.getValue() *
-                                ((ConvolutionalLayer) next).getActivation().differentiateWRTx(((ConvolutionalLayer) layer).getBeforeActivationBox().getValue(netValue)) *
-                                getConvolutionChain((ConvolutionalLayer) next, netValue.getZ(), netValue);
+                        buffer *= weight.getValue();
+                        buffer *= ((ConvolutionalLayer) next).getActivation().differentiateWRTx(((ConvolutionalLayer) layer).getBeforeActivationBox().getValue(netValue));
+                        buffer *= getConvolutionChain((ConvolutionalLayer) next, netValue.getZ(), netValue);
+                        if(weight.getNeuron().getMaxValue() != 0)
+                            buffer /= weight.getNeuron().getMaxValue();
                     }
                     //if next layer is flattening
-                    if(next instanceof FlatteningLayer){
-                        countFinalChain((FlatteningLayer)next);
+                    else if(next instanceof FlatteningLayer){
+                        buffer *= countFinalChain((FlatteningLayer)next);
                     }
+                    tmp += buffer;
                 }
             }
-            chain *=tmp;
+            chain *= tmp;
             neuron.setCurrentChain(chain);
         }
         return chain;

@@ -20,7 +20,7 @@ public class ConvolutionNeuron extends Neuron {
     private KernelBox kernelBox;
     private Utils.Matrix2D beforeActivation;//wartosc przed aktywacja, biasem oraz normalizacja
     private Utils.Matrix2D output;//z neuronu wychodzi jedynie jeden plaster i idzie do boxa warstwy
-    private double maxValue;
+    private double maxValue = 0;
 
 
     public ConvolutionNeuron(NeuralLayer<?extends Neuron> l, int indexInLayer, Utils.Vector3Num<Integer> size) throws RuntimeErrorException {
@@ -66,7 +66,7 @@ public class ConvolutionNeuron extends Neuron {
                 Utils.Matrix2D finalResult = null;
                 int padding = getLayer().getNet().getSettings().getConvolutionPadding();
                 int stride = getLayer().getNet().getSettings().getConvolutionStride();
-                maxValue = 0;
+                this.maxValue = 0;
                 for (int z = 0; z < givenTensor.getSize().getZ(); z++) {
                     //summing all layers
                     Utils.Matrix2D matrix2D = givenTensor.getZMatrix(z);
@@ -84,7 +84,7 @@ public class ConvolutionNeuron extends Neuron {
                     for(int x = 0; x < finalResult.getSize().getX(); x++){
                         double afterChangesValue = finalResult.get(new Utils.Vector2Num<>(x,y));
                         if(maxValue != 0){
-                            //afterChangesValue /= maxValue;
+                            afterChangesValue /= maxValue;
                         }
                         afterChangesValue = getLayer().getActivation().count(afterChangesValue + getBias());
                         output.set(new Utils.Vector2Num<>(x,y),afterChangesValue);

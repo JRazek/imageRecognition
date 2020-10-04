@@ -9,6 +9,6 @@ public abstract class Weight {
         return value;
     }
     public void setValue(double v){
-        value = v;
+        this.value = v;
     }
 }

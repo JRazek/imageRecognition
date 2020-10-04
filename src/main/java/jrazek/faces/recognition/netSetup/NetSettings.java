@@ -10,7 +10,7 @@ public class NetSettings {
     private final int convolutionPadding = 0;
     private final int convolutionStride = 2;
 
-    private final double gradientRate = 10000;
+    private final double gradientRate = 10f;
 
 
     private final int poolingPadding = 0;
