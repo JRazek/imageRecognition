@@ -101,7 +101,7 @@ public class BackpropagationModule {
                 //check
                 ConvolutionWeight weight = entry.getKey();
                 List<Vector3Num<Integer>> netValuesInNextLayer = entry.getValue();
-                //if next layer is convolutional
+                //if next layer is convolutional.
                 Layer next = net.getLayers().get(((ConvolutionalLayer) layer).getIndexInNet()+1);
                 for(Vector3Num<Integer> netValue : netValuesInNextLayer){
                     double buffer = 1;
